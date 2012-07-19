@@ -1,3 +1,5 @@
 *.swp
 bochsout.txt
-src-bak
+*.o
+src/kernel
+*.d
