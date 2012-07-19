@@ -46,4 +46,4 @@ floppy.img : $(KERNEL)
 	sh update_image.sh
 
 run-bochs: floppy.img
-	sh run_bochs.sh
+	@bochs -q
