@@ -1,8 +1,12 @@
 # Source files of the kernel
 CSOURCES=src/common.c \
+	 src/descriptor-tables.c \
+	 src/isr.c \
 	 src/main.c \
 	 src/monitor.c
-ASMSOURCES=src/boot.s
+ASMSOURCES=src/boot.s \
+	   src/gdt.s \
+	   src/interrupt.s
 
 # Resulting kernel image
 KERNEL=src/kernel

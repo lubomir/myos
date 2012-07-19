@@ -27,6 +27,7 @@ static void check_types(void)
 
 int main(struct multiboot *mboot_ptr)
 {
+    init_descriptor_tables ();
     monitor_clear();
     check_types();
     monitor_write("Hello, world!\n");
@@ -43,5 +44,8 @@ int main(struct multiboot *mboot_ptr)
     monitor_write(" ");
     monitor_write_hex(0x10101010);
     monitor_write("\n");
+
+    asm volatile ("int $0x3");
+    asm volatile ("int $0x4");
     return 0xDEADBABA;
 }
