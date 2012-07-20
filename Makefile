@@ -31,10 +31,16 @@ ASFLAGS=-felf
 all: $(KERNEL)
 
 $(KERNEL): $(OBJS) $(LINK)
-	$(LD) $(LDFLAGS) -o $@ $^
+	@echo " LD   $@"
+	@$(LD) $(LDFLAGS) -o $@ $^
 
 .s.o:
-	$(ASM) $(ASFLAGS) $<
+	@echo " ASM  $@"
+	@$(ASM) $(ASFLAGS) $<
+
+%.o : %.c
+	@echo " CC   $@"
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 %.d : %.c
 	@$(CC) $(CFLAGS) -MT $(@:.d=.o) -MM -o $@ $<
