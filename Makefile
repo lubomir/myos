@@ -2,7 +2,7 @@
 CSOURCES=src/common.c \
 	 src/descriptor-tables.c \
 	 src/isr.c \
-	 src/main.c \
+	 src/kmain.c \
 	 src/monitor.c \
 	 src/timer.c
 ASMSOURCES=src/boot.s \

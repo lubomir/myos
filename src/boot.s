@@ -33,14 +33,14 @@ mboot:
 	dd start		; Kernel entry point (initial EIP)
 
 [GLOBAL start]			; Kernel entry point
-[EXTERN main]			; This is the entry point of the C code
+[EXTERN kmain]			; This is the entry point of the C code
 
 start:
 	push ebx		; Load multiboot header location
 
 	; Execute the kernel
 	cli			; Disable interrupts
-	call main		; call the main() function
+	call kmain		; call the kmain() function
 	jmp $			; Enter an infinite loop to stop the processor
 				; executing whatever rubbish is in the memory
 				; after the kernel!

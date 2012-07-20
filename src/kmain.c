@@ -8,7 +8,7 @@
 #include "timer.h"
 
 
-int main(struct multiboot *mboot_ptr)
+int kmain(struct multiboot *mboot_ptr)
 {
     init_descriptor_tables ();
     monitor_clear();
