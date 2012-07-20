@@ -2,8 +2,10 @@
 CSOURCES=src/common.c \
 	 src/descriptor-tables.c \
 	 src/isr.c \
+	 src/kheap.c \
 	 src/kmain.c \
 	 src/monitor.c \
+	 src/paging.c \
 	 src/timer.c
 ASMSOURCES=src/boot.s \
 	   src/gdt.s \
