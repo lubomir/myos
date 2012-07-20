@@ -4,7 +4,9 @@
  * From JamesM's kernel development tutorials.
  */
 
+#include "common.h"
 #include "descriptor-tables.h"
+#include "isr.h"
 
 /* This lets us call ASM functions from the C code. */
 extern void gdt_flush(u32int);
@@ -21,6 +23,8 @@ gdt_ptr_t   gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
 
+extern isr_t interrupt_handlers[];
+
 /*
  * Initialization routine zeroes all the interrupt service routines,
  * initialises GDT and IDT.
@@ -29,6 +33,7 @@ void init_descriptor_tables(void)
 {
     init_gdt();
     init_idt();
+    memset(&interrupt_handlers, 0, sizeof (isr_t) * 256);
 }
 
 static void init_gdt(void)
@@ -72,6 +77,18 @@ static void init_idt(void)
 
     memset(&idt_entries, 0, sizeof(idt_entry_t) * 256);
 
+    /* Remap the irq table */
+    outb(PIC1, ICW1_ICW4 | ICW1_INIT); /* Start init sequence */
+    outb(PIC2, ICW1_ICW4 | ICW1_INIT);
+    outb(PIC1_DATA, 0x20);  /* Master PIC vector starts at 0x20 (32) */
+    outb(PIC2_DATA, 0x28);  /* Slave PIC vector starts at 0x28 (40) */
+    outb(PIC1_DATA, 0x04);  /* Tell master that there is slave at IRQ2 */
+    outb(PIC2_DATA, 0x02);  /* Tell slave its identity IRQ2 (0000 0100) */
+    outb(PIC1_DATA, ICW4_8086);
+    outb(PIC2_DATA, ICW4_8086);
+    outb(PIC1_DATA, 0x0);
+    outb(PIC2_DATA, 0x0);
+
     idt_set_gate( 0, (u32int) isr0,  0x08, 0x8E);
     idt_set_gate( 1, (u32int) isr1,  0x08, 0x8E);
     idt_set_gate( 2, (u32int) isr2,  0x08, 0x8E);
@@ -104,6 +121,23 @@ static void init_idt(void)
     idt_set_gate(29, (u32int) isr29, 0x08, 0x8E);
     idt_set_gate(30, (u32int) isr30, 0x08, 0x8E);
     idt_set_gate(31, (u32int) isr31, 0x08, 0x8E);
+
+    idt_set_gate(32, (u32int) irq0,  0x08, 0x8E);
+    idt_set_gate(33, (u32int) irq1,  0x08, 0x8E);
+    idt_set_gate(34, (u32int) irq2,  0x08, 0x8E);
+    idt_set_gate(35, (u32int) irq3,  0x08, 0x8E);
+    idt_set_gate(36, (u32int) irq4,  0x08, 0x8E);
+    idt_set_gate(37, (u32int) irq5,  0x08, 0x8E);
+    idt_set_gate(38, (u32int) irq6,  0x08, 0x8E);
+    idt_set_gate(39, (u32int) irq7,  0x08, 0x8E);
+    idt_set_gate(40, (u32int) irq8,  0x08, 0x8E);
+    idt_set_gate(41, (u32int) irq9,  0x08, 0x8E);
+    idt_set_gate(42, (u32int) irq10, 0x08, 0x8E);
+    idt_set_gate(43, (u32int) irq11, 0x08, 0x8E);
+    idt_set_gate(44, (u32int) irq12, 0x08, 0x8E);
+    idt_set_gate(45, (u32int) irq13, 0x08, 0x8E);
+    idt_set_gate(46, (u32int) irq14, 0x08, 0x8E);
+    idt_set_gate(47, (u32int) irq15, 0x08, 0x8E);
 
     idt_flush((u32int) &idt_ptr);
 }
