@@ -52,16 +52,19 @@ static void clear_frame(u32int frame_addr)
  */
 static u32int first_frame(void)
 {
-    u32int i, j;
-    for (i = 0; i < INDEX_FROM_BIT(nframes); i++) {
-        if (frames[i] != 0xFFFFFFFF) {  /* Nothing free, exit early */
-            for (j = 0; j < 32; j++) {
-                u32int toTest = 0x1 << j;
-                if (!(frames[i] & toTest)) {
-                    return i * 4 * 8 + j;
-                }
+    /* This function runs in constant time, because it remembers its
+     * previous state in static variables.
+     *
+     * This is even faster than skipping by comparing frames with 0xFFFFFFFF.
+     */
+    static u32int i = 0, j = 0;
+    for (; i < INDEX_FROM_BIT(nframes); i++) {
+        for (; j < 32; j++) {
+            if (!(frames[i] & (0x1 << j))) {
+                return i * 4 * 8 + j;
             }
         }
+        j = 0;
     }
     PANIC("No free frame!");
 }
