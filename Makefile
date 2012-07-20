@@ -18,7 +18,7 @@ KERNEL=src/kernel
 LINK=src/link.ld
 
 OBJS=$(CSOURCES:.c=.o) $(ASMSOURCES:.s=.o)
-DEPS=$(CSOURCES:.c=.d)
+DEPS=$(CSOURCES:.c=.dep)
 
 # Tools
 CC=gcc
@@ -44,8 +44,8 @@ $(KERNEL): $(OBJS) $(LINK)
 	@echo " CC   $@"
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-%.d : %.c
-	@$(CC) $(CFLAGS) -MT $(@:.d=.o) -MM -o $@ $<
+%.dep : %.c
+	@$(CC) $(CFLAGS) -MT $(<:.c=.o) -MM -o $@ $<
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
