@@ -73,6 +73,11 @@
 #define PIT_BINARY      0x00
 #define PIT_BCD         0x01
 
+/*
+ * Initialize timer to fire with given frequency.
+ * NOTE: interrupts must be enabled for timer to work. Use 'sti' instruction
+ * to enable them.
+ */
 void init_timer(u32int frequency);
 
 #endif /* end of include guard: TIMER_H */
