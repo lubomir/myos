@@ -24,7 +24,7 @@ LD=ld
 ASM=nasm
 
 CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector \
-       -m32 -Wall -Iinclude
+       -m32 -Wall -Iinclude -ggdb3
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
@@ -49,7 +49,7 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
 
-.PHONY : clean run-bochs
+.PHONY : clean run-bochs debug-bochs run-qemu debug-qemu
 
 clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
@@ -59,3 +59,12 @@ floppy.img : $(KERNEL)
 
 run-bochs: floppy.img
 	@bochs -q
+
+debug-bochs: floppy.img
+	@bochs -q 'gdbstub: enabled=1'
+
+run-qemu : $(KERNEL)
+	@qemu -kernel $(KERNEL)
+
+debug-qemu : $(KERNEL)
+	@qemu -kernel $(KERNEL) -s -S
