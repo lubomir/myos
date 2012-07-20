@@ -10,9 +10,17 @@ SECTIONS
 {
 	/* All sections will be page aligned. Page size is 1 KB. */
 
-	/* Text section (where the code goes) should be first, should start
-	 * at 0x100000 (1 MB) */
-	.text 0x100000 :
+
+	. = 0x00100000;
+
+	/* This makes sure MultiBoot header is correctly places.
+	 * Without this section GRUB might fail with Error 13 */
+	.__mbHeader : {
+		*(.__mbHeader)
+	}
+
+	/* Text section (where the code goes) should be first. */
+	.text :
 	{
 		code = .; _code = .; __code = .;
 		*(.text)

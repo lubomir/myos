@@ -19,6 +19,7 @@ MBOOT_CHECKSUM	    equ -(MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 [EXTERN bss]			; Start of the '.bss' section.
 [EXTERN end]			; End of the last loadable section.
 
+section .__mbHeader
 mboot:
 	dd MBOOT_HEADER_MAGIC	; GRUB will search for this value on each
 				; 4-byte boundary in the kernel file
