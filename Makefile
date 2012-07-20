@@ -23,7 +23,7 @@ CC=gcc
 LD=ld
 ASM=nasm
 
-CFLAGS=-nostdlib -nostdinc -fno-builtin -m32 -fno-stack-protector
+CFLAGS=-nostdlib -nostdinc -fno-builtin -m32 -fno-stack-protector -Wall
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
