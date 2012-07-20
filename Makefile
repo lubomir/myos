@@ -28,7 +28,7 @@ ASFLAGS=-felf
 
 all: $(KERNEL)
 
-$(KERNEL): $(OBJS)
+$(KERNEL): $(OBJS) $(LINK)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 .s.o:
