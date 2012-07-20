@@ -49,4 +49,16 @@ u16int inw(u16int port);
 #define ICW5_BUF_MASTER 0x0C    /* BUffered mode/master */
 #define ICW_SFNM        0x10    /* Special fully nested (not) */
 
+/*
+ * This function prints error message and enters infinite loop.
+ */
+void panic(const char *msg, const char *file, int line)
+    __attribute__((noreturn));
+
+/*
+ * Accessor macro for panic() function that fills in filename and line number
+ * automatically.
+ */
+#define PANIC(msg) do { panic(msg, __FILE__, __LINE__); } while (0)
+
 #endif /* end of include guard: COMMON_H */

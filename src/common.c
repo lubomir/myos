@@ -4,6 +4,7 @@
  */
 
 #include "common.h"
+#include "monitor.h"
 
 void outb(u16int port, u8int value)
 {
@@ -80,4 +81,15 @@ char * strcat(char *dest, const char *src)
     } while (*src);
 
     return dest;
+}
+
+void panic(const char *msg, const char *file, int line)
+{
+    monitor_write("---\nKernel panic at ");
+    monitor_write(file);
+    monitor_write(":");
+    monitor_write_dec(line);
+    monitor_write("\n");
+    monitor_write(msg);
+    while (1);
 }
