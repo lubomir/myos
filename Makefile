@@ -3,7 +3,8 @@ CSOURCES=src/common.c \
 	 src/descriptor-tables.c \
 	 src/isr.c \
 	 src/main.c \
-	 src/monitor.c
+	 src/monitor.c \
+	 src/timer.c
 ASMSOURCES=src/boot.s \
 	   src/gdt.s \
 	   src/interrupt.s

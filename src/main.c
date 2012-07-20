@@ -5,6 +5,7 @@
  */
 
 #include "common.h"
+#include "timer.h"
 
 #define CHECK_INT(TYPE, SIZE) do {              \
     if (sizeof(TYPE) != SIZE) {                 \
@@ -47,5 +48,11 @@ int main(struct multiboot *mboot_ptr)
 
     asm volatile ("int $0x3");
     asm volatile ("int $0x4");
+
+    /* Without enabling interrupts timer will never kick in. */
+    asm volatile ("sti");
+
+    init_timer(50);
+
     return 0xDEADBABA;
 }
