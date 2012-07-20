@@ -4,6 +4,8 @@
  * Copied from JamesM's tutorials.
  */
 
+#include <string.h>
+
 #include "common.h"
 #include "descriptor-tables.h"
 #include "monitor.h"
