@@ -21,7 +21,7 @@ void monitor_clear(void);
 /*
  * Output a zero-terminated ASCII string to the monitor.
  */
-void monitor_write(char *c);
+void monitor_write(const char *c);
 
 /*
  * Write a number to monitor in hexadecimal system.

@@ -123,7 +123,7 @@ void monitor_clear(void)
     move_cursor();
 }
 
-void monitor_write(char *c)
+void monitor_write(const char *c)
 {
     int i = 0;
     while (c[i]) {
