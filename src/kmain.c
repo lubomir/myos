@@ -5,6 +5,8 @@
  */
 
 #include "common.h"
+#include "descriptor-tables.h"
+#include "monitor.h"
 #include "timer.h"
 
 
