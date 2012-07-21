@@ -133,38 +133,23 @@ void monitor_write(const char *c)
     }
 }
 
-void monitor_write_hex(u32int n)
+void monitor_write_num(u32int n, u32int base, u8int c)
 {
-    u32int quot = 0x10000000;
     u8int digit, printed = 0;
-    while (quot) {
-        digit = (n / quot) % 0x10;
-        if (printed || digit) {
-            if (digit < 10) {
-                monitor_put(digit + '0');
-            } else {
-                monitor_put(digit - 10 + 'a');
-            }
-            printed = 1;
-        }
-        quot = quot / 0x10;
-    }
-    if (!printed) {
-        monitor_put('0');
-    }
-}
+    /* Maximum multiple of base that fits into 32 bits. */
+    u32int max = base == 16 ? 0x1000000 :
+        (base == 10 ? 1000000000 : 010000000000);
 
-void monitor_write_dec(u32int n)
-{
-    u32int quot = 1000000000;
-    u8int digit, printed = 0;
-    while (quot) {
-        digit = (n / quot) % 10;
+    while (max) {
+        digit = (n / max) % base;
         if (printed || digit) {
-            monitor_put(digit + '0');
+            if (digit < 10)
+                monitor_put(digit + '0');
+            else
+                monitor_put(digit - 10 + c);
             printed = 1;
         }
-        quot = quot / 10;
+        max /= base;
     }
     if (!printed) {
         monitor_put('0');
@@ -185,15 +170,22 @@ void monitor_print(const char *fmt, ...)
             monitor_put(*fmt++);
             continue;
         }
+        u8int use_upcase = 0;
         fmt++;
         switch (*fmt++) {
         case 'u':
             num = va_arg(ap, u32int);
             monitor_write_dec(num);
             break;
+        case 'X':
+            use_upcase = 1;
         case 'x':
             num = va_arg(ap, u32int);
-            monitor_write_hex(num);
+            monitor_write_num(num, 16, use_upcase ? 'A' : 'a');
+            break;
+        case 'o':
+            num = va_arg(ap, u32int);
+            monitor_write_num(num, 8, '0');
             break;
         case 'd':
         case 'i':

@@ -24,20 +24,27 @@ void monitor_clear(void);
 void monitor_write(const char *c);
 
 /*
+ * Write a number to monitor in given base. 'c' is the character that will
+ * be printed for digit 10.
+ */
+void monitor_write_num(u32int n, u32int base, u8int c);
+
+/*
  * Write a number to monitor in hexadecimal system.
  */
-void monitor_write_hex(u32int n);
+#define monitor_write_hex(n) monitor_write_num(n, 16, 'a');
 
 /*
  * Write a number to monitor in decimal system.
  */
-void monitor_write_dec(u32int n);
+#define monitor_write_dec(n) monitor_write_num(n, 10, '0');
 
 /*
  * Printf-like function for outputting text to monitor.
  * This function supports following formatting flags:
  *   u      print unsigned in decimal
- *   x      print unsigned in hexadecimal
+ *   x, X   print unsigned in hexadecimal
+ *   o      print unsigned in octal
  *   d, i   print signed in signed decimal notation
  *   s      print string
  *   c      print char
