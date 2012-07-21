@@ -205,6 +205,8 @@ void monitor_print(const char *fmt, ...)
             c = va_arg(ap, int);
             monitor_put(c);
             break;
+        default:
+            PANIC("Unknown format flag");
         }
     }
     va_end(ap);
