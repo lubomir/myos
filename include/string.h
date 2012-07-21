@@ -2,6 +2,9 @@
  * string.h -- define interface to basic string and memory functions
  */
 
+#ifndef STRING_H
+#define STRING_H
+
 /*
  * Fill the first len bytes of the memory starting at dest with byte val.
  */
@@ -38,3 +41,5 @@ char * strcat(char *dest, const char *src);
  * Count byte length of of the string s excluding the terminating null byte.
  */
 unsigned int strlen(const char s);
+
+#endif /* end of include guard: STRING_H */
