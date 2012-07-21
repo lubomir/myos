@@ -66,6 +66,7 @@ char * strcpy(char *dest, const char *src)
     do {
         *dp++ = *src++;
     } while (*src);
+    *dp = 0;
     return dest;
 }
 
