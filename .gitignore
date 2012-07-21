@@ -3,3 +3,5 @@
 *.dep
 src/kernel
 bochsout.txt
+gen-initrd
+inird.img

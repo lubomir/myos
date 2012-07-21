@@ -22,7 +22,9 @@ LINK=src/link.ld
 OBJS=$(CSOURCES:.c=.o) $(ASMSOURCES:.s=.o)
 DEPS=$(CSOURCES:.c=.dep)
 
-# Tools
+TOOLS=gen-initrd
+
+# System tools
 CC=gcc
 LD=ld
 ASM=nasm
@@ -32,7 +34,7 @@ CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector \
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
-all: $(KERNEL)
+all: $(KERNEL) $(TOOLS)
 
 $(KERNEL): $(OBJS) $(LINK)
 	@echo " LD   $@"
@@ -53,10 +55,13 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
 
+include tools/Makefile.mk
+
 .PHONY : clean run-bochs debug-bochs run-qemu debug-qemu
 
 clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
+	-rm -f $(CLEANTARGETS)
 
 floppy.img : $(KERNEL)
 	sh update_image.sh
