@@ -133,6 +133,20 @@ void monitor_write(const char *c)
     }
 }
 
+/*
+ * Compute logarithm of a number in a specific base.
+ * Result will be rounded up.
+ */
+static u32int log_base(u32int n, u32int base)
+{
+    u32int exp = 0;
+    do {
+        n /= base;
+        exp++;
+    } while (n);
+    return exp;
+}
+
 void monitor_write_num(u32int n, u32int base, u8int c)
 {
     u8int digit, printed = 0;
