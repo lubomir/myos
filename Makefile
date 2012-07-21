@@ -1,6 +1,7 @@
 # Source files of the kernel
 CSOURCES=src/common.c \
 	 src/descriptor-tables.c \
+	 src/fs.c \
 	 src/isr.c \
 	 src/kheap.c \
 	 src/kmain.c \
