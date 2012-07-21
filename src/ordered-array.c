@@ -74,3 +74,15 @@ void oa_remove(ordered_array_t *array, u32int i)
     }
     array->size--;
 }
+
+u8int oa_remove_item(ordered_array_t *array, type_t item)
+{
+    u32int iter = 0;
+    while (iter < array->size && array->data[iter] != item)
+        iter++;
+    if (iter < array->size) {
+        oa_remove(array, iter);
+        return 1;
+    }
+    return 0;
+}

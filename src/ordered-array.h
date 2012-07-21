@@ -66,4 +66,10 @@ type_t oa_lookup(ordered_array_t *array, u32int i);
  */
 void oa_remove(ordered_array_t *array, u32int i);
 
+/*
+ * Delete item with given value.
+ * Return 0 if there is no such item in the array, 1 otherwise.
+ */
+u8int oa_remove_item(ordered_array_t *array, type_t item);
+
 #endif /* end of include guard: ORDERED_ARRAY_H */

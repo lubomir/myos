@@ -350,16 +350,8 @@ void free(heap_t *heap, void *p)
         test_f->header = header;
         footer = test_f;
 
-        /* Find and remove this header from the index. */
-        u32int iter = 0;
-        while ((iter < heap->index.size) &&
-                (oa_lookup(&heap->index, iter) != test_h))
-            iter++;
-
-        /* Make sure we actually found the item. */
-        ASSERT(iter < heap->index.size);
-        /* Remove it. */
-        oa_remove(&heap->index, iter);
+        u8int removed = oa_remove_item(&heap->index, test_h);
+        ASSERT(removed >= 0);
     }
 
     /* If the footer location is the end address, we can contract. */
@@ -373,14 +365,7 @@ void free(heap_t *heap, void *p)
             footer->magic = HEAP_MAGIC;
             footer->header = header;
         } else {
-            /* We will no longer exist. Remove from index. */
-            u32int iter = 0;
-            while ((iter < heap->index.size) &&
-                    (oa_lookup(&heap->index, iter) != test_h))
-                iter++;
-            /* If hole is not indexed, we have nothing to remove. */
-            if (iter < heap->index.size)
-                oa_remove(&heap->index, iter);
+            oa_remove_item(&heap->index, test_h);
         }
     }
 
