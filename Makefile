@@ -2,6 +2,7 @@
 CSOURCES=src/common.c \
 	 src/descriptor-tables.c \
 	 src/fs.c \
+	 src/initrd.c \
 	 src/isr.c \
 	 src/kheap.c \
 	 src/kmain.c \
