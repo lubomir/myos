@@ -64,6 +64,7 @@ include tools/Makefile.mk
 
 clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
+	-rm -f $(CLEANTARGETS)
 
 floppy.img : $(KERNEL)
 	sh tools/update_image.sh
