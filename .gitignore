@@ -1,6 +1,7 @@
 *.swp
 *.o
 *.dep
+*.img
 src/kernel
 bochsout.txt
 gen-initrd
