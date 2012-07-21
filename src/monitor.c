@@ -3,6 +3,8 @@
  * From JamesM's kernel development tutorials.
  */
 
+#include <stdarg.h>
+
 #include "monitor.h"
 
 /* The VGA framebuffer starts at 0xB8000 */
@@ -167,4 +169,43 @@ void monitor_write_dec(u32int n)
     if (!printed) {
         monitor_put('0');
     }
+}
+
+void monitor_print(const char *fmt, ...)
+{
+    va_list ap;
+    u32int num;
+    const char *str;
+    char c;
+
+    va_start(ap, fmt);
+    while (*fmt) {
+        if (*fmt != '%') {
+            monitor_put(*fmt++);
+            continue;
+        }
+        fmt++;
+        switch (*fmt++) {
+        case 'u':
+            num = va_arg(ap, u32int);
+            monitor_write_dec(num);
+            break;
+        case 'x':
+            num = va_arg(ap, u32int);
+            monitor_write_hex(num);
+            break;
+        case '%':
+            monitor_put('%');
+            break;
+        case 's':
+            str = va_arg(ap, const char *);
+            monitor_write(str);
+            break;
+        case 'c':
+            c = va_arg(ap, int);
+            monitor_put(c);
+            break;
+        }
+    }
+    va_end(ap);
 }
