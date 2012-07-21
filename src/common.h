@@ -61,4 +61,10 @@ void panic(const char *msg, const char *file, int line)
  */
 #define PANIC(msg) do { panic(msg, __FILE__, __LINE__); } while (0)
 
+/*
+ * Check that condition holds and panic if it does not.
+ */
+#define ASSERT(exp) \
+        do { if (!(exp)) PANIC("Assertion failed: "#exp); } while (0)
+
 #endif /* end of include guard: COMMON_H */
