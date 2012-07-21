@@ -175,6 +175,7 @@ void monitor_print(const char *fmt, ...)
 {
     va_list ap;
     u32int num;
+    s32int snum;
     const char *str;
     char c;
 
@@ -193,6 +194,15 @@ void monitor_print(const char *fmt, ...)
         case 'x':
             num = va_arg(ap, u32int);
             monitor_write_hex(num);
+            break;
+        case 'd':
+        case 'i':
+            snum = va_arg(ap, s32int);
+            if (snum < 0) {
+                monitor_put('-');
+                snum *= -1;
+            }
+            monitor_write_dec((u32int) snum);
             break;
         case '%':
             monitor_put('%');

@@ -36,11 +36,12 @@ void monitor_write_dec(u32int n);
 /*
  * Printf-like function for outputting text to monitor.
  * This function supports following formatting flags:
- *   %u     print unsigned in decimal
- *   %x     print unsigned in hexadecimal
- *   %s     print string
- *   %c     print char
- *   %%     print plain %
+ *   u      print unsigned in decimal
+ *   x      print unsigned in hexadecimal
+ *   d, i   print signed in signed decimal notation
+ *   s      print string
+ *   c      print char
+ *   %      print plain %
  */
 void monitor_print(const char *fmt, ...)
     __attribute__((format(printf, 1, 2)));
