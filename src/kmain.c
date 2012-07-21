@@ -45,7 +45,7 @@ int kmain(struct multiboot *mboot_ptr)
         if ((fsnode->flags & 0x7) == FS_DIRECTORY) {
             monitor_write("\t(directory)\n");
         } else {
-            monitor_print("\tlength %d bytes\n", fsnode->length);
+            monitor_print("\tlength %u bytes\n", fsnode->length);
         }
         i++;
     }
