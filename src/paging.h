@@ -67,4 +67,14 @@ page_t *get_page(u32int address, int make, page_directory_t *dir);
  */
 void page_fault(registers_t regs);
 
+/*
+ * Function to allocate a frame.
+ */
+void alloc_frame(page_t *page, int is_kernel, int is_writable);
+
+/*
+ * Function to deallocate a frame.
+ */
+void free_frame(page_t *page);
+
 #endif /* end of include guard: PAGING_H */

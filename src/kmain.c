@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "descriptor-tables.h"
+#include "kheap.h"
 #include "monitor.h"
 #include "paging.h"
 #include "timer.h"
@@ -19,12 +20,19 @@ int kmain(struct multiboot *mboot_ptr)
     init_descriptor_tables();
     monitor_clear();
     placement_address *= 2;
+
+    monitor_write("Hello, paging world with heap!\n");
+
+    u32int a = kmalloc(8);
     initialise_paging();
+    u32int b = kmalloc(8);
+    u32int c = kmalloc(8);
 
-    monitor_write("Hello, paging world!\n");
-
-    u32int *ptr = (u32int *) 0xA0000000;
-    u32int do_page_fault = *ptr;
+    monitor_print("a: %x, b: %x\nc: %x", a, b, c);
+    kfree(b);
+    kfree(c);
+    u32int d = kmalloc(12);
+    monitor_print(", d: %x\n", d);
 
     return 0;
 }
