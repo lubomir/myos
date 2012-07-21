@@ -19,7 +19,7 @@ int kmain(struct multiboot *mboot_ptr)
 {
     init_descriptor_tables();
     monitor_clear();
-    placement_address *= 2;
+    placement_address += 0x1000 * 6;
 
     monitor_write("Hello, paging world with heap!\n");
 
