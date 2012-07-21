@@ -4,6 +4,11 @@
 
 #include "kheap.h"
 
+/*
+ * Check if address is page aligned.
+ */
+#define PAGE_ALIGNED(addr) (((addr) & 0xFFFFF000) == 0)
+
 /* end is defined in the linker script */
 extern u32int end;
 u32int placement_address = (u32int) &end;
@@ -11,7 +16,7 @@ u32int placement_address = (u32int) &end;
 u32int kmalloc_internal(u32int sz, int align, u32int *phys)
 {
     /* If the address is not already aligned, align it. */
-    if (align == 1 && (placement_address & 0xFFFFF000)) {
+    if (align == 1 && !PAGE_ALIGNED(placement_address)) {
         placement_address &= 0xFFFFF000;
         placement_address += 0x1000;
     }
