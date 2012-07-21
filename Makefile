@@ -66,7 +66,7 @@ clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
 
 floppy.img : $(KERNEL)
-	sh update_image.sh
+	sh tools/update_image.sh
 
 run-bochs: floppy.img
 	@bochs -q
