@@ -113,6 +113,7 @@ void initialise_paging(void)
 
     /* Let's make a page directory. */
     kernel_directory = (page_directory_t *) kmalloc_a(sizeof(page_directory_t));
+    memset(kernel_directory, 0, sizeof(page_directory_t));
     current_directory = kernel_directory;
 
     /* We need to identity map (phys addr = virt addr) from 0x0 to the end
