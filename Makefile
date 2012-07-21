@@ -60,11 +60,14 @@ endif
 
 include tools/Makefile.mk
 
-.PHONY : clean run-bochs debug-bochs run-qemu debug-qemu
+.PHONY : clean cloc run-bochs debug-bochs run-qemu debug-qemu
 
 clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
 	-rm -f $(CLEANTARGETS)
+
+cloc:
+	@cloc . --exclude-dir=tmp --force-lang=make,mk
 
 floppy.img : $(KERNEL)
 	sh tools/update_image.sh
