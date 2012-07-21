@@ -37,6 +37,11 @@ typedef struct {
 #define HEADER_T(x) ((header_t *)(x))
 #define FOOTER_T(x) ((footer_t *)(x))
 
+/*
+ * Get pointer to a footer matching given header.
+ */
+#define HEADER_GET_FOOTER(h) FOOTER_T((u32int) h + h->size - sizeof(footer_t))
+
 typedef struct {
     ordered_array_t index;
     /* The start of our allocated space. */

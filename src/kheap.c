@@ -317,7 +317,7 @@ void free(heap_t *heap, void *p)
 
     /* Get the header and footer associated with this pointer. */
     header_t *header = HEADER_T((u32int)p - sizeof(header_t));
-    footer_t *footer = FOOTER_T((u32int)header + header->size - sizeof(footer_t));
+    footer_t *footer = HEADER_GET_FOOTER(header);
 
     /* Sanity check. */
     ASSERT(header->magic == HEAP_MAGIC);
@@ -361,7 +361,7 @@ void free(heap_t *heap, void *p)
         /* Check how big we will be after resizing. */
         if (header->size > old_length - new_length) {
             header->size -= old_length - new_length;
-            footer = FOOTER_T((u32int) header + header->size - sizeof(footer_t));
+            footer = HEADER_GET_FOOTER(header);
             footer->magic = HEAP_MAGIC;
             footer->header = header;
         } else {
