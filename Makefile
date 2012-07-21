@@ -5,6 +5,7 @@ CSOURCES=src/common.c \
 	 src/kheap.c \
 	 src/kmain.c \
 	 src/monitor.c \
+	 src/ordered-array.c \
 	 src/paging.c \
 	 src/timer.c
 ASMSOURCES=src/boot.s \
