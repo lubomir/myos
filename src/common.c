@@ -83,6 +83,13 @@ char * strcat(char *dest, const char *src)
     return dest;
 }
 
+u32int strlen(const char *s)
+{
+    u32int len = 0;
+    while (*s++) len++;
+    return len;
+}
+
 void panic(const char *msg, const char *file, int line)
 {
     /* Disable interrupts. */

@@ -33,3 +33,8 @@ char * strcpy(char *dest, const char *src);
  * The strings may not overlap, and the dest string must be large enough.
  */
 char * strcat(char *dest, const char *src);
+
+/*
+ * Count byte length of of the string s excluding the terminating null byte.
+ */
+unsigned int strlen(const char s);
