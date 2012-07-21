@@ -9,7 +9,7 @@
 #include "isr.h"
 
 
-struct page {
+typedef struct {
     /* Page present in memory */
     u32int present  : 1;
     /* Read-only if clear, read-write if set */
@@ -23,16 +23,14 @@ struct page {
     /* Amalgamation of unused and reserved bits */
     u32int unused   : 7;
     /* Frame address (shifted right 12 bits) */
-    u32int frame     : 20;
-};
+    u32int frame    : 20;
+} page_t;
 
-typedef struct page page_t;
-
-typedef struct page_table {
+typedef struct {
     page_t pages[1024];
 } page_table_t;
 
-struct page_directory {
+typedef struct {
     /* Array of pointers to pagetables */
     page_table_t *tables[1024];
     /* Array of pointers to page tables above, but gives their physical
@@ -42,9 +40,7 @@ struct page_directory {
      * we get our kernel heap allocated and the directory may be in a
      * different location in virtual memory. */
     u32int physicalAddr;
-};
-
-typedef struct page_directory page_directory_t;
+} page_directory_t;
 
 /*
  * Sets up the environment, page directories, etc. and enables paging.
