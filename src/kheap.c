@@ -9,6 +9,15 @@
  * Check if address is page aligned.
  */
 #define PAGE_ALIGNED(addr) (((addr) & 0xFFFFF000) == 0)
+/*
+ * Page align given address.
+ * Please note that this macro modifies its parameter, so you can only pass
+ * it expressions that are proper left hand side of assignment.
+ */
+#define PAGE_ALIGN(addr) do {   \
+        addr &= 0xFFFFF000;     \
+        addr += 0x1000;         \
+    } while (0)
 
 /* This is the main kernel heap. */
 heap_t *kheap = 0;
@@ -32,8 +41,7 @@ u32int kmalloc_internal(u32int sz, int align, u32int *phys)
     }
     /* If the address is not already aligned, align it. */
     if (align == 1 && !PAGE_ALIGNED(placement_address)) {
-        placement_address &= 0xFFFFF000;
-        placement_address += 0x1000;
+        PAGE_ALIGN(placement_address);
     }
     if (phys) {
         *phys = placement_address;
@@ -124,8 +132,7 @@ heap_t * heap_create(u32int start, u32int end, u32int max,
 
     /* Make sure the start address is page aligned now. */
     if (!PAGE_ALIGNED(start)) {
-        start &= 0xFFFFF000;
-        start += 0x1000;
+        PAGE_ALIGN(start);
     }
 
     /* Write the start, end and max addresses into the heap structure. */
@@ -151,8 +158,7 @@ static void expand(heap_t *heap, u32int new_size)
 
     /* Get the nearest following page boundary. */
     if (!PAGE_ALIGNED(new_size)) {
-        new_size &= 0xFFFFF000;
-        new_size += 0x1000;
+        PAGE_ALIGN(new_size);
     }
     /* Make sure we are not overreaching ourselves. */
     ASSERT(heap->start_addr + new_size <= heap->max_addr);
@@ -173,8 +179,7 @@ static u32int contract(heap_t *heap, u32int new_size)
     ASSERT(new_size < heap->end_addr - heap->start_addr);
 
     if (!PAGE_ALIGNED(new_size)) {
-        new_size &= 0x1000; /* FIXME: this is suspicious */
-        new_size += 0x1000;
+        PAGE_ALIGN(new_size);
     }
 
     /* Don't contract too far. */
