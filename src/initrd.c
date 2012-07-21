@@ -66,6 +66,10 @@ static fs_node_t *initrd_finddir(fs_node_t *node, char *name)
 
 fs_node_t *initialise_initrd(u32int location)
 {
+    /* Initialise the main and file header pointers. */
+    initrd_header = (initrd_header_t *) location;
+    file_headers = (initrd_file_header_t *) (location + sizeof(initrd_header_t));
+
     /* Initialise the root directory. */
     initrd_root = (fs_node_t *) kmalloc(sizeof(fs_node_t));
     strcpy(initrd_root->name, "initrd");
@@ -83,7 +87,7 @@ fs_node_t *initialise_initrd(u32int location)
 
     /* Initialise the /dev directory. */
     initrd_dev = (fs_node_t *) kmalloc(sizeof(fs_node_t));
-    strcpy(initrd_root->name, "initrd");
+    strcpy(initrd_dev->name, "dev");
     initrd_dev->mask = initrd_dev->uid = initrd_dev->gid =
         initrd_dev->inode = initrd_dev->length = 0;
     initrd_dev->flags   = FS_DIRECTORY;
@@ -98,6 +102,7 @@ fs_node_t *initialise_initrd(u32int location)
 
     root_nodes =
         (fs_node_t *) kmalloc(sizeof(fs_node_t) * initrd_header->nfiles);
+    nroot_nodes = initrd_header->nfiles;
 
     int i;
     for (i = 0; i < initrd_header->nfiles; ++i) {

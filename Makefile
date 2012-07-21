@@ -16,14 +16,13 @@ ASMSOURCES=src/boot.s \
 
 # Resulting kernel image
 KERNEL=src/kernel
+INITRD=initrd.img
 
 # Linker script
 LINK=src/link.ld
 
 OBJS=$(CSOURCES:.c=.o) $(ASMSOURCES:.s=.o)
 DEPS=$(CSOURCES:.c=.dep)
-
-TOOLS=gen-initrd
 
 # System tools
 CC=gcc
@@ -40,6 +39,9 @@ all: $(KERNEL) $(TOOLS)
 $(KERNEL): $(OBJS) $(LINK)
 	@echo " LD   $@"
 	@$(LD) $(LDFLAGS) -o $@ $^
+
+$(INITRD): tools/gen-initrd
+	sh tools/update_initrd.sh
 
 .s.o:
 	@echo " ASM  $@"
@@ -62,7 +64,6 @@ include tools/Makefile.mk
 
 clean:
 	-rm -f src/*.o src/*.d $(KERNEL)
-	-rm -f $(CLEANTARGETS)
 
 floppy.img : $(KERNEL)
 	sh update_image.sh
@@ -73,8 +74,8 @@ run-bochs: floppy.img
 debug-bochs: floppy.img
 	@bochs -q 'gdbstub: enabled=1'
 
-run-qemu : $(KERNEL)
-	@qemu -kernel $(KERNEL)
+run-qemu : $(KERNEL) $(INITRD)
+	@qemu -kernel $(KERNEL) -initrd $(INITRD)
 
-debug-qemu : $(KERNEL)
-	@qemu -kernel $(KERNEL) -s -S
+debug-qemu : $(KERNEL) $(INITRD)
+	@qemu -kernel $(KERNEL) -initrd $(INITRD) -s -S
