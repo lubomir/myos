@@ -85,6 +85,9 @@ char * strcat(char *dest, const char *src)
 
 void panic(const char *msg, const char *file, int line)
 {
+    /* Disable interrupts. */
+    asm volatile ("cli");
+
     monitor_write("---\nKernel panic at ");
     monitor_write(file);
     monitor_write(":");
