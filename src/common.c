@@ -63,9 +63,8 @@ int strcmp(const char *str1, const char *str2)
 char * strcpy(char *dest, const char *src)
 {
     char *dp = dest;
-    do {
+    while (*src)
         *dp++ = *src++;
-    } while (*src);
     *dp = 0;
     return dest;
 }
@@ -73,14 +72,9 @@ char * strcpy(char *dest, const char *src)
 char * strcat(char *dest, const char *src)
 {
     char *dp = dest;
-    while (*dp) {
+    while (*dp)
         dp++;
-    }
-
-    do {
-        *dp++ = *src++;
-    } while (*src);
-
+    strcpy(dp, src);
     return dest;
 }
 
