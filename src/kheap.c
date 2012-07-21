@@ -77,7 +77,7 @@ static s32int find_smallest_hole(heap_t *heap, u32int size, u8int page_align)
     u32int iter = 0;
 
     while (iter < heap->index.size) {
-        header_t *header = (header_t*) oa_lookup(&heap->index, iter);
+        header_t *header = HEADER_T(oa_lookup(&heap->index, iter));
         if (page_align > 0) {   /* If the user requested page-aligned block */
             /* Page-align the starting point of this header. */
             u32int location = (u32int) header;
@@ -102,7 +102,7 @@ static s32int find_smallest_hole(heap_t *heap, u32int size, u8int page_align)
  */
 static int header_compare(void *a, void *b)
 {
-    return ((header_t *)a)->size - ((header_t *)b)->size;
+    return HEADER_T(a)->size - HEADER_T(b)->size;
 }
 
 heap_t * heap_create(u32int start, u32int end, u32int max,
@@ -136,7 +136,7 @@ heap_t * heap_create(u32int start, u32int end, u32int max,
     heap->readonly   = readonly;
 
     /* We start off with one large hole in the index. */
-    header_t *hole = (header_t *) start;
+    header_t *hole = HEADER_T(start);
     hole->size = end - start;
     hole->magic = HEAP_MAGIC;
     hole->is_hole = 1;
@@ -223,11 +223,11 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
 
         /* If we didn't find ANY headers, we need to add one. */
         if (idx == -1) {
-            header_t *head = (header_t*)old_end_addr;
+            header_t *head = HEADER_T(old_end_addr);
             head->magic = HEAP_MAGIC;
             head->size  = new_length - old_length;
             head->is_hole = 1;
-            footer_t *foot = (footer_t *) (old_end_addr + head->size - sizeof(footer_t));
+            footer_t *foot = FOOTER_T(old_end_addr + head->size - sizeof(footer_t));
             foot->magic = HEAP_MAGIC;
             foot->header = head;
             oa_insert(&heap->index, head);
@@ -236,7 +236,7 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
             header_t *head = oa_lookup(&heap->index, idx);
             head->size += new_length - old_length;
             /* Rewrite the footer. */
-            footer_t *foot = (footer_t *) ((u32int)head + head->size - sizeof(footer_t));
+            footer_t *foot = FOOTER_T((u32int)head + head->size - sizeof(footer_t));
             foot->header = head;
             foot->magic = HEAP_MAGIC;
         }
@@ -244,7 +244,7 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
         return alloc(heap, size, page_align);
     }
 
-    header_t *orig_hole_header = (header_t *) oa_lookup(&heap->index, iter);
+    header_t *orig_hole_header = HEADER_T(oa_lookup(&heap->index, iter));
     u32int orig_hole_pos = (u32int) orig_hole_header;
     u32int orig_hole_size = orig_hole_header->size;
 
@@ -263,11 +263,11 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
         u32int new_loc = orig_hole_pos + 0x1000
                                 - (orig_hole_pos & 0xFFF)
                                 - sizeof(header_t);
-        header_t *header = (header_t *) orig_hole_pos;
+        header_t *header = HEADER_T(orig_hole_pos);
         header->size = 0x1000 - (orig_hole_pos & 0xFFF) - sizeof(header_t);
         header->magic = HEAP_MAGIC;
         header->is_hole = 1;
-        footer_t *footer = (footer_t *) ((u32int) new_loc - sizeof(footer_t));
+        footer_t *footer = FOOTER_T((u32int) new_loc - sizeof(footer_t));
         footer->magic = HEAP_MAGIC;
         footer->header = header;
         orig_hole_pos = new_loc;
@@ -278,24 +278,24 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
     }
 
     /* Overwrite the original header ... */
-    header_t *block_head = (header_t *) orig_hole_pos;
+    header_t *block_head = HEADER_T(orig_hole_pos);
     block_head->magic   = HEAP_MAGIC;
     block_head->is_hole = 0;
     block_head->size    = new_size;
     /* ... and footer. */
-    footer_t *block_foot = (footer_t*)(orig_hole_pos + size + sizeof(header_t));
+    footer_t *block_foot = FOOTER_T(orig_hole_pos + size + sizeof(header_t));
     block_foot->magic   = HEAP_MAGIC;
     block_foot->header  = block_head;
 
     /* We may need to write a new hole after the allocated block. We do this
      * only if the new hole would have positive size. */
     if (orig_hole_size > new_size) {
-        header_t *header = (header_t*)(orig_hole_pos + sizeof(header_t)
-                                        + size + sizeof(footer_t));
+        header_t *header = HEADER_T(orig_hole_pos + sizeof(header_t)
+                                    + size + sizeof(footer_t));
         header->magic   = HEAP_MAGIC;
         header->is_hole = 1;
         header->size    = orig_hole_size - new_size;
-        footer_t *footer = (footer_t*) ((u32int)header + orig_hole_size
+        footer_t *footer = FOOTER_T((u32int)header + orig_hole_size
                                         - new_size - sizeof(footer_t));
         if ((u32int)footer < heap->end_addr) {
             footer->magic = HEAP_MAGIC;
@@ -316,8 +316,8 @@ void free(heap_t *heap, void *p)
     }
 
     /* Get the header and footer associated with this pointer. */
-    header_t *header = (header_t*) ((u32int)p - sizeof(header_t));
-    footer_t *footer = (footer_t*) ((u32int)header + header->size - sizeof(footer_t));
+    header_t *header = HEADER_T((u32int)p - sizeof(header_t));
+    footer_t *footer = FOOTER_T((u32int)header + header->size - sizeof(footer_t));
 
     /* Sanity check. */
     ASSERT(header->magic == HEAP_MAGIC);
@@ -331,7 +331,7 @@ void free(heap_t *heap, void *p)
 
     /* Unify left.
      * If the thing immediately to the left of us is a footer ... */
-    footer_t *test_f = (footer_t*) ((u32int) header - sizeof(footer_t));
+    footer_t *test_f = FOOTER_T((u32int) header - sizeof(footer_t));
     if (test_f->magic == HEAP_MAGIC && test_f->header->is_hole) {
         u32int cache = header->size;    /* Cache our current size. */
         header = test_f->header;        /* Rewrite our header with new one. */
@@ -342,11 +342,11 @@ void free(heap_t *heap, void *p)
 
     /* Unify right.
      * If the thing immediately to the right of us is a header ... */
-    header_t *test_h = (header_t*) ((u32int)footer + sizeof(footer_t));
+    header_t *test_h = HEADER_T((u32int)footer + sizeof(footer_t));
     if (test_h->magic == HEAP_MAGIC && test_h->is_hole) {
         header->size += test_h->size;   /* Increase our size. */
         /* Find its footer. */
-        test_f = (footer_t*) ((u32int)test_h + test_h->size - sizeof(footer_t));
+        test_f = FOOTER_T((u32int)test_h + test_h->size - sizeof(footer_t));
         test_f->header = header;
         footer = test_f;
 
@@ -369,7 +369,7 @@ void free(heap_t *heap, void *p)
         /* Check how big we will be after resizing. */
         if (header->size > old_length - new_length) {
             header->size -= old_length - new_length;
-            footer = (footer_t*)((u32int) header + header->size - sizeof(footer_t));
+            footer = FOOTER_T((u32int) header + header->size - sizeof(footer_t));
             footer->magic = HEAP_MAGIC;
             footer->header = header;
         } else {

@@ -30,6 +30,13 @@ typedef struct {
     header_t *header;
 } footer_t;
 
+/*
+ * These macros help simplify code that works with headers and footers.
+ * They typecast their argument to pointer to a header_t or footer_t.
+ */
+#define HEADER_T(x) ((header_t *)(x))
+#define FOOTER_T(x) ((footer_t *)(x))
+
 typedef struct {
     ordered_array_t index;
     /* The start of our allocated space. */
