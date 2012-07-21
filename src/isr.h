@@ -4,6 +4,9 @@
  * Rewritten and taken from JamesM's kernel development tutorials.
  */
 
+#ifndef ISR_H
+#define ISR_H
+
 #include "common.h"
 
 typedef struct registers {
@@ -40,3 +43,5 @@ typedef struct registers {
  */
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(u8int n, isr_t handler);
+
+#endif /* end of include guard: ISR_H */
