@@ -198,8 +198,6 @@ void page_fault(registers_t regs)
     if (reserved) {
         monitor_write("reserved ");
     }
-    monitor_write(") at 0x");
-    monitor_write_hex(faulting_address);
-    monitor_write("\n");
+    monitor_print(") at 0x%x\n", faulting_address);
     PANIC("Page fault!");
 }

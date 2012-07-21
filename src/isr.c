@@ -25,9 +25,7 @@ void isr_handler(registers_t regs)
         isr_t handler = interrupt_handlers[regs.int_no];
         handler(regs);
     } else {
-        monitor_write("Unhandled interrupt: ");
-        monitor_write_dec(regs.int_no);
-        monitor_put('\n');
+        monitor_print("Unhandled interrupt: %u\n", regs.int_no);
     }
 }
 
