@@ -30,7 +30,9 @@ LD=ld
 ASM=nasm
 
 CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector \
-       -m32 -Wall -Iinclude -ggdb3
+       -m32 -Iinclude -ggdb3 \
+       -Wall -Wextra -Wpointer-arith -Wcast-align -Wredundant-decls \
+       -Wnested-externs
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
