@@ -48,7 +48,7 @@ $(KERNEL): $(OBJS) $(LINK)
 $(INITRD): tools/gen-initrd
 	sh tools/update_initrd.sh
 
-.s.o:
+%.o : %.s
 	$(call cmd,$(ASM) $(ASFLAGS) $<,ASM,$@)
 
 %.o : %.c
