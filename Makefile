@@ -63,7 +63,7 @@ include tools/Makefile.mk
 .PHONY : clean cloc run-bochs debug-bochs run-qemu debug-qemu
 
 clean:
-	-rm -f src/*.o src/*.d $(KERNEL)
+	-rm -f src/*.o src/*.dep $(KERNEL)
 	-rm -f $(CLEANTARGETS)
 
 cloc:
