@@ -1,18 +1,18 @@
 # Source files of the kernel
-CSOURCES=src/common.c \
-	 src/descriptor-tables.c \
-	 src/fs.c \
-	 src/initrd.c \
-	 src/isr.c \
-	 src/kheap.c \
-	 src/kmain.c \
-	 src/monitor.c \
-	 src/ordered-array.c \
-	 src/paging.c \
-	 src/timer.c
-ASMSOURCES=src/boot.s \
-	   src/gdt.s \
-	   src/interrupt.s
+SOURCES=src/boot.s \
+	src/common.c \
+	src/descriptor-tables.c \
+	src/fs.c \
+	src/gdt.s \
+	src/initrd.c \
+	src/interrupt.s \
+	src/isr.c \
+	src/kheap.c \
+	src/kmain.c \
+	src/monitor.c \
+	src/ordered-array.c \
+	src/paging.c \
+	src/timer.c
 
 # Resulting kernel image
 KERNEL=src/kernel
@@ -21,8 +21,8 @@ INITRD=initrd.img
 # Linker script
 LINK=src/link.ld
 
-OBJS=$(CSOURCES:.c=.o) $(ASMSOURCES:.s=.o)
-DEPS=$(CSOURCES:.c=.dep)
+OBJS := $(patsubst %.c,%.o,$(patsubst %.s,%.o,$(SOURCES)))
+DEPS := $(patsubst %.c,%.dep,$(filter %.c,$(SOURCES)))
 
 # System tools
 CC=gcc
