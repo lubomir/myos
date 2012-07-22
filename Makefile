@@ -34,22 +34,25 @@ CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector \
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
+ifeq ($(V),1)
+cmd = $1
+else
+cmd = @printf " %s\t%s\n" $2 $3; $1
+endif
+
 all: $(KERNEL) $(TOOLS)
 
 $(KERNEL): $(OBJS) $(LINK)
-	@echo " LD   $@"
-	@$(LD) $(LDFLAGS) -o $@ $^
+	$(call cmd,$(LD) $(LDFLAGS) -o $@ $^,LD,$@)
 
 $(INITRD): tools/gen-initrd
 	sh tools/update_initrd.sh
 
 .s.o:
-	@echo " ASM  $@"
-	@$(ASM) $(ASFLAGS) $<
+	$(call cmd,$(ASM) $(ASFLAGS) $<,ASM,$@)
 
 %.o : %.c
-	@echo " CC   $@"
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	$(call cmd,$(CC) $(CFLAGS) -c -o $@ $<,CC,$@)
 
 %.dep : %.c
 	@$(CC) $(CFLAGS) -MT "$(<:.c=.o) $@" -MM -o $@ $<
