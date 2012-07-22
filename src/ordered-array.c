@@ -11,7 +11,9 @@
 
 int standard_cmp_pred(type_t a, type_t b)
 {
-    return a - b;
+    if ((u32int) a < (u32int) b)
+        return -((u32int) b - (u32int) a);
+    return (u32int) a - (u32int) b;
 }
 
 ordered_array_t oa_create(u32int max_size, cmp_predicate_t pred)
@@ -33,7 +35,7 @@ ordered_array_t oa_place(void *addr, u32int max_size, cmp_predicate_t pred)
 
 void oa_destroy(ordered_array_t *array)
 {
-    kfree(array->data);
+    kfree((u32int) array->data);
 }
 
 void oa_insert(ordered_array_t *arr, type_t item)

@@ -102,7 +102,7 @@ static s32int find_smallest_hole(heap_t *heap, u32int size, u8int page_align)
         iter++;
     }
     /* Why did the loop exit? */
-    return iter == heap->index.size ? -1 /* Not found */ : iter;
+    return iter == heap->index.size ? -1 /* Not found */ : (s32int) iter;
 }
 
 /*
@@ -217,17 +217,19 @@ void * alloc(heap_t *heap, u32int size, u8int page_align)
         /* Vars to hold the index of, and value of, the endmost header found
          * so far. */
         u32int idx = -1, value = 0;
-        while (iter < heap->index.size) {
+        u8int found_frame = 0;
+        while (iter < (s32int) heap->index.size) {
             u32int tmp = (u32int) oa_lookup(&heap->index, iter);
             if (tmp > value) {
                 value = tmp;
                 idx = iter;
+                found_frame = 1;
             }
             iter++;
         }
 
         /* If we didn't find ANY headers, we need to add one. */
-        if (idx == -1) {
+        if (found_frame) {
             header_t *head = HEADER_T(old_end_addr);
             head->magic = HEAP_MAGIC;
             head->size  = new_length - old_length;
@@ -356,7 +358,7 @@ void free(heap_t *heap, void *p)
         footer = test_f;
 
         u8int removed = oa_remove_item(&heap->index, test_h);
-        ASSERT(removed >= 0);
+        ASSERT(removed);
     }
 
     /* If the footer location is the end address, we can contract. */
