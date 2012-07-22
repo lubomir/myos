@@ -18,8 +18,6 @@ fs_node_t *initrd_root;
 fs_node_t *initrd_dev;
 /* List of file nodes. */
 fs_node_t *root_nodes;
-/* Number of file nodes. */
-int nroot_nodes;
 
 struct dirent dirent;
 
@@ -43,7 +41,7 @@ static struct dirent *initrd_readdir(fs_node_t *node, u32int index)
         return &dirent;
     }
 
-    if (index - 1 >= nroot_nodes)
+    if (index - 1 >= initrd_header->nfiles)
         return 0;
 
     strcpy(dirent.name, root_nodes[index-1].name);
@@ -56,8 +54,8 @@ static fs_node_t *initrd_finddir(fs_node_t *node, char *name)
     if (node == initrd_root && !strcmp(name, "dev"))
         return initrd_dev;
 
-    int i;
-    for (i = 0; i < nroot_nodes; ++i) {
+    u32int i;
+    for (i = 0; i < initrd_header->nfiles; ++i) {
         if (!strcmp(name, root_nodes[i].name))
             return &root_nodes[i];
     }
@@ -102,9 +100,8 @@ fs_node_t *initialise_initrd(u32int location)
 
     root_nodes =
         (fs_node_t *) kmalloc(sizeof(fs_node_t) * initrd_header->nfiles);
-    nroot_nodes = initrd_header->nfiles;
 
-    int i;
+    u32int i;
     for (i = 0; i < initrd_header->nfiles; ++i) {
         /* Edit the file's header - currently it holds the file offset
          * relative to the start of the ramdisk. We want it to be relative
