@@ -52,7 +52,7 @@ $(INITRD): tools/gen-initrd
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 %.dep : %.c
-	@$(CC) $(CFLAGS) -MT $(<:.c=.o) -MM -o $@ $<
+	@$(CC) $(CFLAGS) -MT "$(<:.c=.o) $@" -MM -o $@ $<
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
