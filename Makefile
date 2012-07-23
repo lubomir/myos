@@ -13,6 +13,7 @@ SOURCES=src/boot.s \
 	src/ordered-array.c \
 	src/paging.c \
 	src/process.s \
+	src/task.c \
 	src/timer.c
 
 # Resulting kernel image

@@ -36,6 +36,7 @@ mboot:
 [EXTERN kmain]			; This is the entry point of the C code
 
 start:
+	push esp		; Location of initial stack.
 	push ebx		; Load multiboot header location
 
 	; Execute the kernel

@@ -18,8 +18,14 @@
 
 extern u32int placement_address;
 
-int kmain(struct multiboot *mboot_ptr)
+/*
+ * Address where GRUB put the initial stack.
+ */
+u32int initial_esp;
+
+int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
 {
+    initial_esp = initial_stack;
     init_descriptor_tables();
     monitor_clear();
 
