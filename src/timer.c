@@ -5,14 +5,14 @@
 
 #include "timer.h"
 #include "isr.h"
-#include "monitor.h"
+#include "task.h"
 
 u32int tick = 0;
 
 static void timer_callback(registers_t regs)
 {
     tick++;
-    monitor_print("Tick: %u\n", tick);
+    switch_task();
 }
 
 void init_timer(u32int frequency)
