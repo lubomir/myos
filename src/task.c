@@ -51,6 +51,10 @@ void switch_task(void)
     if (!current_task)
         return;
 
+    /* This fixes the triple fault that happens in Qemu and page fault in
+     * Bochs. I have no idea why it works, though. */
+    asm volatile ("nop");
+
     u32int esp, ebp, eip;
     asm volatile ("mov %%esp, %0" : "=r" (esp));
     asm volatile ("mov %%ebp, %0" : "=r" (ebp));
