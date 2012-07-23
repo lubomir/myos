@@ -109,7 +109,7 @@ void initialise_paging(void)
     /* Let's make a page directory. */
     kernel_directory = (page_directory_t *) kmalloc_a(sizeof(page_directory_t));
     memset(kernel_directory, 0, sizeof(page_directory_t));
-    current_directory = kernel_directory;
+    kernel_directory->physicalAddr = (u32int) kernel_directory->tablesPhysical;
 
     /* Map some pages in the kernel heap area.
      * Here we call get_page but not alloc_frame. This causes page_table_t's
@@ -149,12 +149,15 @@ void initialise_paging(void)
     /* Initialize the kernel heap. */
     kheap = heap_create(KHEAP_START, KHEAP_START+KHEAP_INIT_SIZE,
             0xCFFFF000, 0, 0);
+
+    current_directory = clone_directory(kernel_directory);
+    switch_page_directory(current_directory);
 }
 
 void switch_page_directory(page_directory_t *dir)
 {
     current_directory = dir;
-    asm volatile ("mov %0, %%cr3" :: "r"(&dir->tablesPhysical));
+    asm volatile ("mov %0, %%cr3" :: "r"(dir->physicalAddr));
     u32int cr0;
     asm volatile ("mov %%cr0, %0" : "=r"(cr0));
     cr0 |= 0x80000000;  /* Enable paging! */
@@ -215,4 +218,68 @@ void page_fault(registers_t regs)
     }
     monitor_print(") at 0x%x\n", faulting_address);
     PANIC("Page fault!");
+}
+
+/* Defined in process.s */
+extern void copy_page_physical(u32int src, u32int dest);
+
+static page_table_t *clone_table(page_table_t *src, u32int *physAddr)
+{
+    /* Make a new page-aligned page table. */
+    page_table_t *table = (page_table_t *) kmalloc_ap(sizeof(*table), physAddr);
+    /* Ensure it is blank. */
+    memset(table, 0, sizeof(*table));
+
+    /* For each entry in the table. */
+    u16int i;
+    for (i = 0; i < 1024; ++i) {
+        if (!src->pages[i].frame)
+            continue;
+
+        alloc_frame(&table->pages[i], 0, 0);
+        if (src->pages[i].present)  table->pages[i].present = 1;
+        if (src->pages[i].rw)       table->pages[i].rw = 1;
+        if (src->pages[i].user)     table->pages[i].user = 1;
+        if (src->pages[i].access)   table->pages[i].access = 1;
+        if (src->pages[i].dirty)    table->pages[i].dirty = 1;
+        /* Physically copy the data across. This function is in process.s. */
+        copy_page_physical(src->pages[i].frame * 0x1000,
+                table->pages[i].frame * 0x1000);
+    }
+    return table;
+}
+
+page_directory_t *clone_directory(page_directory_t *src)
+{
+    u32int phys;
+    /* Make a new page directory and obtain its physical address. */
+    page_directory_t *dir = (page_directory_t *) kmalloc_ap(sizeof(page_directory_t), &phys);
+    /* Ensure it is blank. */
+    memset(dir, 0, sizeof(page_directory_t));
+
+    /* Get the offset of tablesPhysical from the start of the page_directory_t
+     * structure. */
+    u32int offset = (u32int) dir->tablesPhysical - (u32int) dir;
+
+    /* Then the physical address of of dir->TablesPhysical is: */
+    dir->physicalAddr = phys + offset;
+
+    u16int i;
+    for (i = 0; i < 1024; ++i) {
+        if (!src->tables[i])
+            continue;
+
+        if (kernel_directory->tables[i] == src->tables[i]) {
+            /* It's in the kernel, so just use the same pointer. */
+            dir->tables[i] = src->tables[i];
+            dir->tablesPhysical[i] = src->tablesPhysical[i];
+        } else {
+            /* Copy the table. */
+            u32int phys;
+            dir->tables[i] = clone_table(src->tables[i], &phys);
+            dir->tablesPhysical[i] = phys | 0x07;
+            /* 0x07 means Present, Read-write, user-mode */
+        }
+    }
+    return dir;
 }

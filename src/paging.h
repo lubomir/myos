@@ -73,4 +73,9 @@ void alloc_frame(page_t *page, int is_kernel, int is_writable);
  */
 void free_frame(page_t *page);
 
+/*
+ * Clone a page directory.
+ */
+page_directory_t *clone_directory(page_directory_t *src);
+
 #endif /* end of include guard: PAGING_H */
