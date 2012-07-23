@@ -113,6 +113,10 @@ void switch_task(void)
 
 int fork(void)
 {
+    /* If there is no current task, panic. */
+    if (!current_task)
+        PANIC("Call to initialise_tasking is required to enable forking!");
+
     /* We are modifying kernel structures, and so cannot be interrupted. */
     asm volatile ("cli");
 
