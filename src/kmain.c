@@ -16,6 +16,7 @@
 #include "paging.h"
 #include "task.h"
 #include "timer.h"
+#include "syscall.h"
 
 extern u32int placement_address;
 
@@ -50,31 +51,11 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     /* Initialise the initial ramdisk, and set it as the filesystem root. */
     fs_root = initialise_initrd(initrd_location);
 
-    /* Create a new process in a new address space which is a clone of this. */
-    int ret = fork();
+    initialise_syscalls();
 
-    monitor_print("fork() returned %x, and getpid() returned %x\n",
-            ret, getpid());
-    monitor_write("===============================================================================\n");
+    switch_to_user_mode();
 
-    /* The next section is not reentrant. */
-    asm volatile ("cli");
-
-    int i = 0;
-    struct dirent *node = 0;
-    while ((node = readdir_fs(fs_root, i)) != 0) {
-        monitor_print("Found file %s\n", node->name);
-        fs_node_t *fsnode = finddir_fs(fs_root, node->name);
-
-        if ((fsnode->flags & 0x7) == FS_DIRECTORY) {
-            monitor_write("\t(directory)\n");
-        } else {
-            monitor_print("\tlength %u bytes\n", fsnode->length);
-        }
-        i++;
-    }
-
-    asm volatile ("sti");
+    syscall_monitor_write("Hello, user world!\n");
 
     return 0;
 }
