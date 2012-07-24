@@ -45,12 +45,15 @@ u8int kdbus[128] = {
     0, /* All other keys are undefined */
 };
 
+/* Bitfield representing the state of a keyboard. */
+u8int kb_state;
+
 #define KB_DATA 0x60
 #define KB_CTRL 0x64
 
 void keyboard_handler(registers_t regs)
 {
-    u8int scancode;
+    u8int scancode, key;
 
     /* Read from the keyboard's data buffer. */
     scancode = inb(KB_DATA);
@@ -59,11 +62,38 @@ void keyboard_handler(registers_t regs)
      * that means that a key has just been released. */
     if (scancode & 0x80) {
         /* Do something about it. */
+        switch (scancode) {
+        case 0x2A: /* Left Shift */
+        case 0x36: /* Right Shift */
+            kb_state &= ~KB_STATE_SHIFT;
+            break;
+        case 0x38: /* Left Alt */
+            kb_state &= ~KB_STATE_ALT;
+            break;
+        case 0x1D: /* Left Control */
+            kb_state &= ~KB_STATE_CTRL;
+            break;
+        }
     } else {
         /* Here a key was just pressed. Please note that if you hold a key
          * down, you will get repeated key press interrupts. */
-
-        monitor_put(kdbus[scancode]);
+        switch (scancode) {
+        case 0x2A: /* Left Shift */
+        case 0x36: /* Right Shift */
+            kb_state |= KB_STATE_SHIFT;
+            break;
+        case 0x38: /* Left Alt */
+            kb_state |= KB_STATE_ALT;
+            break;
+        case 0x1D: /* Left Control */
+            kb_state |= KB_STATE_CTRL;
+            break;
+        default:
+            key = kdbus[scancode];
+            if (key >= 'a' && key <= 'z' && (kb_state & KB_STATE_SHIFT))
+                key -= 32;
+            monitor_put(key);
+        }
     }
 }
 
