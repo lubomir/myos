@@ -67,6 +67,7 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
 
+include data/Makefile.mk
 include tools/Makefile.mk
 
 .PHONY : clean cloc run-bochs debug-bochs run-qemu debug-qemu

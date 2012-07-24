@@ -1,0 +1,22 @@
+The keymap is stored in 256 bytes. First 128 bytes correspond to scancodes
+emitted when in scan code set 1, the second 128 bytes are used when Shift key
+is pressed.
+
+There is a gen-keymap utility in tools/, that can create a binary file with
+keymap definition. It expects two command line arguments - input and output
+file.
+
+The input file has simple text format: each line defines one entry in the
+keymap table and has format of either:
+
+    idx=val
+    idx:code
+
+Where `idx` is the index in the table to be set to either `val` (which is the
+printable character itself) or to character which ASCII code is `code`. The
+code is specified in decadic notation.
+
+All values that are not specified are set to 0.
+
+Empty lines are ignored, as is anything after the `val` or `code` part of line
+or any leading whitespace or space around operator.

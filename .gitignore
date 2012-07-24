@@ -6,3 +6,4 @@ src/kernel
 bochsout.txt
 gen-initrd
 inird.img
+tools/gen-keymap
