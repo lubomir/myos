@@ -21,3 +21,12 @@ idt_flush:
     mov eax, [esp+4]    ; Get the pointer to the IDT, passed as parameter
     lidt [eax]          ; Load the IDT pointer
     ret
+
+[GLOBAL tss_flush]      ; Allows C code to call tss_flush().
+tss_flush:
+    mov ax, 0x2B        ; Load the index of our TSS structure - the index
+                        ; is 0x2B, as it is the 5th selector and each is
+                        ; 8 bytes long, but we set the bottom two bits so
+                        ; that it has an RPL of 3, not zero.
+    ltr ax              ; Load the 0x2B into the task state register.
+    ret
