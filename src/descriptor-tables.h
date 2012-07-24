@@ -4,8 +4,8 @@
  * From JamesM's kernel development tutorials.
  */
 
-#ifndef DESCRIPTOR_TABLE_H
-#define DESCRIPTOR_TABLE_H
+#ifndef DESCRIPTOR_TABLES_H
+#define DESCRIPTOR_TABLES_H
 
 #include "common.h"
 
@@ -212,4 +212,4 @@ typedef struct tss_entry_struct tss_entry_t;
  */
 void set_kernel_stack(u32int stack);
 
-#endif /* end of include guard: DESCRIPTOR-TABLE_H */
+#endif /* end of include guard: DESCRIPTOR_TABLES_H */
