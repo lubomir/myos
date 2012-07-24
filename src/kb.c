@@ -20,10 +20,8 @@ u8int kb_state;
 
 void keyboard_handler(registers_t regs)
 {
-    u8int scancode, key;
-
     /* Read from the keyboard's data buffer. */
-    scancode = inb(KB_DATA);
+    u8int scancode = inb(KB_DATA);
 
     /* If the top bit of the byte we read from the keyboard is set,
      * that means that a key has just been released. */
@@ -57,10 +55,7 @@ void keyboard_handler(registers_t regs)
             kb_state |= KB_STATE_CTRL;
             break;
         default:
-            key = kbmap[scancode];
-            if (key >= 'a' && key <= 'z' && (kb_state & KB_STATE_SHIFT))
-                key -= 32;
-            monitor_put(key);
+            monitor_put(kbmap[scancode + (kb_state & KB_STATE_SHIFT ? 128 : 0)]);
         }
     }
 }
