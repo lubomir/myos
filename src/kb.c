@@ -28,6 +28,7 @@ void keyboard_handler(registers_t regs)
     /* If the top bit of the byte we read from the keyboard is set,
      * that means that a key has just been released. */
     if (scancode & 0x80) {
+        scancode &= ~0x80;
         /* Do something about it. */
         switch (scancode) {
         case 0x2A: /* Left Shift */
