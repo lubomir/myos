@@ -5,6 +5,7 @@
 
 #include <string.h>
 
+#include "descriptor-tables.h"
 #include "kheap.h"
 #include "task.h"
 
@@ -40,6 +41,7 @@ void initialise_tasking(void)
     current_task->eip = 0;
     current_task->page_directory = current_directory;
     current_task->next = 0;
+    current_task->kernel_stack = kmalloc_a(KERNEL_STACK_SIZE);
 
     /* Re-enable interrupts. */
     asm volatile ("sti");
@@ -93,6 +95,9 @@ void switch_task(void)
     /* Make sure the memory manager knows we've changed page directory. */
     current_directory = current_task->page_directory;
 
+    /* Change our kernel stack over. */
+    set_kernel_stack(current_task->kernel_stack + KERNEL_STACK_SIZE);
+
     /* Here we:
      * 1) stop interrupts so we don't get interrupted,
      * 2) temporarily put the new EIP location in ECX,
@@ -136,6 +141,8 @@ int fork(void)
     new_task->esp = new_task->ebp = 0;
     new_task->eip = 0;
     new_task->page_directory = dir;
+    /* TODO: why current_task? */
+    current_task->kernel_stack = kmalloc_a(KERNEL_STACK_SIZE);
     new_task->next = 0;
 
     /* Add it to the end of the ready queue. */
@@ -227,6 +234,9 @@ int getpid(void)
 
 void switch_to_user_mode(void)
 {
+    /* Set up our kernel stack. */
+    set_kernel_stack(current_task->kernel_stack + KERNEL_STACK_SIZE);
+
     /* Set up a stack structure for switching to user mode. */
     asm volatile (
             "cli;"              /* Disable interrupts. */
