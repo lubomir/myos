@@ -14,7 +14,8 @@ SOURCES=src/boot.s \
 	src/paging.c \
 	src/process.s \
 	src/task.c \
-	src/timer.c
+	src/timer.c \
+	src/syscall.c
 
 # Resulting kernel image
 KERNEL=src/kernel

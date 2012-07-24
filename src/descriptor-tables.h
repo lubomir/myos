@@ -153,6 +153,7 @@ extern void irq12(void);
 extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
+extern void isr128(void);
 
 /*
  * Initialisation function is publicly accessible.
