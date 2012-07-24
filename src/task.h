@@ -49,4 +49,9 @@ void move_stack(void *new_stack_start, u32int size);
  */
 int getpid(void);
 
+/*
+ * Switch the execution to user mode.
+ */
+void switch_to_user_mode(void);
+
 #endif /* end of include guard: TASK_H */

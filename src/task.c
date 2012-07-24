@@ -224,3 +224,27 @@ int getpid(void)
 {
     return current_task->id;
 }
+
+void switch_to_user_mode(void)
+{
+    /* Set up a stack structure for switching to user mode. */
+    asm volatile (
+            "cli;"              /* Disable interrupts. */
+            "mov $0x23, %ax;"   /* Use our user-mode data selector - 0x23. */
+            "mov %ax, %ds;"
+            "mov %ax, %es;"
+            "mov %ax, %fs;"
+            "mov %ax, %gs;"
+
+            "mov %esp, %eax;"   /* Save the stack pointer for later use. */
+            "pushl $0x23;"      /* Push stack segment selector. */
+            "pushl %eax;"       /* Push the stack pointer value we want it
+                                   to have after iret. */
+            "pushf;"            /* Push current value of EFLAGS. */
+            "pushl $0x1B;"      /* Push the code segment selector. */
+            "push $1f;"         /* Push location of the 1: label. */
+            "iret;"             /* After this we should be in user-mode. */
+            "1:\n"
+            );
+    /* TODO: are interrupts enabled again? */
+}
