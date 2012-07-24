@@ -35,7 +35,7 @@ ASM=nasm
 CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector \
        -m32 -Iinclude -ggdb3 \
        -Wall -Wextra -Wpointer-arith -Wcast-align -Wredundant-decls \
-       -Wnested-externs
+       -Wnested-externs -Wno-unused-parameter
 LDFLAGS=-T$(LINK) -m elf_i386
 ASFLAGS=-felf
 
