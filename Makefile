@@ -51,7 +51,7 @@ all: $(KERNEL) $(TOOLS)
 $(KERNEL): $(OBJS) $(LINK)
 	$(call cmd,$(LD) $(LDFLAGS) -o $@ $^,LD,$@)
 
-$(INITRD): tools/gen-initrd
+$(INITRD): tools/gen-initrd data/keymaps/us.keymap
 	sh tools/update_initrd.sh
 
 %.o : %.s

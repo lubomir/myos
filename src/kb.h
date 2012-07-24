@@ -21,8 +21,8 @@
 extern u8int kb_state;
 
 /*
- * Register the keyboard interrupt handler.
+ * Register the keyboard interrupt handler with given keyboard map.
  */
-void initialise_keyboard(void);
+void initialise_keyboard(u8int *map);
 
 #endif /* end of include guard: KB_H */

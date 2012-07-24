@@ -52,7 +52,11 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     /* Initialise the initial ramdisk, and set it as the filesystem root. */
     fs_root = initialise_initrd(initrd_location);
 
-    initialise_keyboard();
+    /* Load keymap file and initialise keyboard. */
+    fs_node_t *keymap_file = finddir_fs(fs_root, "us.keymap");
+    u8int keymap[256];
+    read_fs(keymap_file, 0, 256, keymap);
+    initialise_keyboard(keymap);
 
     return 0;
 }
