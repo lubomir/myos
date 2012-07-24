@@ -10,6 +10,7 @@
 #include "descriptor-tables.h"
 #include "fs.h"
 #include "initrd.h"
+#include "kb.h"
 #include "kheap.h"
 #include "monitor.h"
 #include "multiboot.h"
@@ -51,11 +52,7 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     /* Initialise the initial ramdisk, and set it as the filesystem root. */
     fs_root = initialise_initrd(initrd_location);
 
-    initialise_syscalls();
-
-    switch_to_user_mode();
-
-    syscall_monitor_write("Hello, user world!\n");
+    initialise_keyboard();
 
     return 0;
 }

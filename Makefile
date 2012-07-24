@@ -7,6 +7,7 @@ SOURCES=src/boot.s \
 	src/initrd.c \
 	src/interrupt.s \
 	src/isr.c \
+	src/kb.c \
 	src/kheap.c \
 	src/kmain.c \
 	src/monitor.c \
