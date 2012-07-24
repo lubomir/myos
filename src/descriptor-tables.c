@@ -22,7 +22,7 @@ static void init_idt(void);
 static void idt_set_gate(u8int, u32int, u16int, u8int);
 static void write_tss(s32int, u16int, u32int);
 
-gdt_entry_t gdt_entries[5];
+gdt_entry_t gdt_entries[6];
 gdt_ptr_t   gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
@@ -43,7 +43,7 @@ void init_descriptor_tables(void)
 
 static void init_gdt(void)
 {
-    gdt_ptr.limit = (sizeof (gdt_entry_t) * 5) - 1;
+    gdt_ptr.limit = (sizeof (gdt_entry_t) * 6) - 1;
     gdt_ptr.base  = (u32int) &gdt_entries;
 
     gdt_set_gate(0, 0, 0, 0, 0);                /* Null segment */
