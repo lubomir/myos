@@ -43,7 +43,7 @@ void init_descriptor_tables(void)
 
 static void init_gdt(void)
 {
-    gdt_ptr.limit = (sizeof (gdt_entry_t) * 6) - 1;
+    gdt_ptr.limit = (sizeof gdt_entries) - 1;
     gdt_ptr.base  = (u32int) &gdt_entries;
 
     gdt_set_gate(0, 0, 0, 0, 0);                /* Null segment */
