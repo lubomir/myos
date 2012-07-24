@@ -21,11 +21,16 @@ void register_interrupt_handler(u8int n, isr_t handler)
  */
 void isr_handler(registers_t regs)
 {
+    /* This line is important. When the processor extends the 8-bit interrupt
+     * number to a 32 bit value, it sign-extends, not zero extends. So fi the
+     * most significant bit (0x80) is set, regs.int_no will be very large
+     * (about 0xFFFFFF80). */
+    u8int int_no = regs.int_no & 0xFF;
     if (interrupt_handlers[regs.int_no]) {
-        isr_t handler = interrupt_handlers[regs.int_no];
+        isr_t handler = interrupt_handlers[int_no];
         handler(regs);
     } else {
-        monitor_print("Unhandled interrupt: %u\n", regs.int_no);
+        monitor_print("Unhandled interrupt: %u\n", int_no);
     }
 }
 
