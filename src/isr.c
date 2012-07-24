@@ -31,6 +31,7 @@ void isr_handler(registers_t regs)
         handler(regs);
     } else {
         monitor_print("Unhandled interrupt: %u\n", int_no);
+        for (;;);
     }
 }
 
