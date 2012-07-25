@@ -35,13 +35,13 @@ void initialise_tasking(void)
     move_stack((void *) 0xE0000000, 0x2000);
 
     /* Initialise the first task (kernel task). */
-    current_task = ready_queue = (task_t*) kmalloc(sizeof(task_t));
+    current_task = ready_queue = kmalloc(sizeof(task_t));
     current_task->id = next_pid++;
     current_task->esp = current_task->ebp = 0;
     current_task->eip = 0;
     current_task->page_directory = current_directory;
     current_task->next = 0;
-    current_task->kernel_stack = kmalloc_a(KERNEL_STACK_SIZE);
+    current_task->kernel_stack = (u32int) kmalloc_a(KERNEL_STACK_SIZE);
 
     /* Re-enable interrupts. */
     asm volatile ("sti");
@@ -136,13 +136,13 @@ int fork(void)
     page_directory_t *dir = clone_directory(current_directory);
 
     /* Create a new process. */
-    task_t *new_task = (task_t *) kmalloc(sizeof(task_t));
+    task_t *new_task = kmalloc(sizeof(task_t));
     new_task->id = next_pid++;
     new_task->esp = new_task->ebp = 0;
     new_task->eip = 0;
     new_task->page_directory = dir;
     /* TODO: why current_task? */
-    current_task->kernel_stack = kmalloc_a(KERNEL_STACK_SIZE);
+    current_task->kernel_stack = (u32int) kmalloc_a(KERNEL_STACK_SIZE);
     new_task->next = 0;
 
     /* Add it to the end of the ready queue. */

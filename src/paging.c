@@ -103,11 +103,11 @@ void initialise_paging(void)
     u32int mem_end_page = 0x1000000;
 
     nframes = mem_end_page / 0x1000;
-    frames = (u32int *) kmalloc(INDEX_FROM_BIT(nframes));
+    frames = kmalloc(INDEX_FROM_BIT(nframes));
     memset(frames, 0, INDEX_FROM_BIT(nframes));
 
     /* Let's make a page directory. */
-    kernel_directory = (page_directory_t *) kmalloc_a(sizeof(page_directory_t));
+    kernel_directory = kmalloc_a(sizeof(page_directory_t));
     memset(kernel_directory, 0, sizeof(page_directory_t));
     kernel_directory->physicalAddr = (u32int) kernel_directory->tablesPhysical;
 
@@ -175,8 +175,7 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
     }
     if (make) {
         u32int tmp;
-        dir->tables[table_idx] =
-            (page_table_t *) kmalloc_ap(sizeof(page_table_t), &tmp);
+        dir->tables[table_idx] = kmalloc_ap(sizeof(page_table_t), &tmp);
         memset(dir->tables[table_idx], 0, 0x1000);
         dir->tablesPhysical[table_idx] = tmp | 0x7; /* PRESENT, RW, US */
         return &dir->tables[table_idx]->pages[address % 1024];
@@ -226,7 +225,7 @@ extern void copy_page_physical(u32int src, u32int dest);
 static page_table_t *clone_table(page_table_t *src, u32int *physAddr)
 {
     /* Make a new page-aligned page table. */
-    page_table_t *table = (page_table_t *) kmalloc_ap(sizeof(*table), physAddr);
+    page_table_t *table = kmalloc_ap(sizeof *table, physAddr);
     /* Ensure it is blank. */
     memset(table, 0, sizeof(*table));
 
@@ -253,7 +252,7 @@ page_directory_t *clone_directory(page_directory_t *src)
 {
     u32int phys;
     /* Make a new page directory and obtain its physical address. */
-    page_directory_t *dir = (page_directory_t *) kmalloc_ap(sizeof(page_directory_t), &phys);
+    page_directory_t *dir = kmalloc_ap(sizeof *dir, &phys);
     /* Ensure it is blank. */
     memset(dir, 0, sizeof(page_directory_t));
 

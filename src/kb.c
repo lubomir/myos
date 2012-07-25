@@ -62,7 +62,7 @@ void keyboard_handler(registers_t regs)
 
 void initialise_keyboard(u8int *map)
 {
-    kbmap = (u8int *) kmalloc(256);
+    kbmap = kmalloc(256);
     memcpy(kbmap, map, 256);
     register_interrupt_handler(IRQ1, keyboard_handler);
 }

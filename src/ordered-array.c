@@ -18,7 +18,7 @@ int standard_cmp_pred(type_t a, type_t b)
 
 ordered_array_t oa_create(u32int max_size, cmp_predicate_t pred)
 {
-    void *mem = (void *) kmalloc(max_size * sizeof(type_t));
+    void *mem = kmalloc(max_size * sizeof(type_t));
     return oa_place(mem, max_size, pred);
 }
 

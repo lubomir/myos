@@ -29,7 +29,7 @@ u32int placement_address = (u32int) &end;
 /* defined in paging.c */
 extern page_directory_t *kernel_directory;
 
-u32int kmalloc_internal(u32int sz, int align, u32int *phys)
+void * kmalloc_internal(u32int sz, int align, u32int *phys)
 {
     if (kheap) {
         void *addr = alloc(kheap, sz, (u8int)align);
@@ -37,7 +37,7 @@ u32int kmalloc_internal(u32int sz, int align, u32int *phys)
             page_t *page = get_page((u32int) addr, 0, kernel_directory);
             *phys = page->frame * 0x1000 + ((u32int) addr & 0xFFF);
         }
-        return (u32int) addr;
+        return addr;
     }
     /* If the address is not already aligned, align it. */
     if (align == 1 && !PAGE_ALIGNED(placement_address)) {
@@ -48,25 +48,25 @@ u32int kmalloc_internal(u32int sz, int align, u32int *phys)
     }
     u32int tmp = placement_address;
     placement_address += sz;
-    return tmp;
+    return (void *) tmp;
 }
 
-u32int kmalloc(u32int sz)
+void * kmalloc(u32int sz)
 {
     return kmalloc_internal(sz, 0, 0);
 }
 
-u32int kmalloc_a(u32int sz)
+void * kmalloc_a(u32int sz)
 {
     return kmalloc_internal(sz, 1, 0);
 }
 
-u32int kmalloc_p(u32int sz, u32int *phys)
+void * kmalloc_p(u32int sz, u32int *phys)
 {
     return kmalloc_internal(sz, 0, phys);
 }
 
-u32int kmalloc_ap(u32int sz, u32int *phys)
+void * kmalloc_ap(u32int sz, u32int *phys)
 {
     return kmalloc_internal(sz, 1, phys);
 }
@@ -116,7 +116,7 @@ static int header_compare(void *a, void *b)
 heap_t * heap_create(u32int start, u32int end, u32int max,
                      u8int supervisor, u8int readonly)
 {
-    heap_t *heap = (heap_t *) kmalloc(sizeof(heap_t));
+    heap_t *heap = kmalloc(sizeof *heap);
 
     /* All assumptions are made on startAddress and endAddress being
      * page-aligned. */
