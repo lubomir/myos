@@ -14,9 +14,9 @@ SOURCES=src/boot.s \
 	src/ordered-array.c \
 	src/paging.c \
 	src/process.s \
+	src/syscall.c \
 	src/task.c \
-	src/timer.c \
-	src/syscall.c
+	src/timer.c
 
 # Resulting kernel image
 KERNEL=src/kernel
