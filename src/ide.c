@@ -73,7 +73,7 @@
 #define ATA_REG_DATA        0x00
 #define ATA_REG_ERROR       0x01
 #define ATA_REG_FEATURES    0x01
-#define ATA_REG_SECCOOUNT0  0x02
+#define ATA_REG_SECCOUNT0   0x02
 #define ATA_REG_LBA0        0x03
 #define ATA_REG_LBA1        0x04
 #define ATA_REG_LBA2        0x05
@@ -341,7 +341,13 @@ void initialise_ide(u32int bar0, u32int bar1,
 
             /* Probe for ATAPI Devices. */
             if (err != 0) {
-                ;/* TODO finish. */
+                u8int cl = ide_read(i, ATA_REG_LBA1);
+                u8int ch = ide_read(i, ATA_REG_LBA2);
+
+                if ((cl == 0x14 && ch == 0xEB) || (cl == 0x69 && ch == 0x96))
+                    type = IDE_ATAPI;
+                else
+                    continue; /* Unknown type. */
             }
 
             /* Read Identification Space of the device. */
