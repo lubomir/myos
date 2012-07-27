@@ -397,3 +397,122 @@ void initialise_ide(u32int bar0, u32int bar1,
         }
     }
 }
+
+u8int ide_ata_access(u8int direction, u8int drive, u32int lba,
+        u8int numsects, u16int selector, u8int edi)
+{
+    u8int lba_mode, dma, cmd;
+    u8int lba_io[6];
+    u32int channel  = ide_devices[drive].channel;
+    u32int slavebit = ide_devices[drive].drive;
+    u32int bus      = channels[channel].base;
+    /* Almost every ATA drive has a sector size of 512 bytes. */
+    u32int words    = 256;
+    u16int cyl, i;
+    u8int head, sect, err;
+
+    /* Disable IRQ. */
+    ide_irq_invoked = 0;
+    channels[channel].nIen = 2;
+    ide_write(channel, ATA_REG_CONTROL, 2);
+
+    /* Select addressing method. */
+    if (lba >= 0x10000000) {
+        /* Either LBA is wrong or drive must support LBA48. */
+        /* LBA48 */
+        lba_mode = 2;
+        lba_io[0] = (lba & 0x000000FF);
+        lba_io[1] = (lba & 0x0000FF00) >> 8;
+        lba_io[2] = (lba & 0x00FF0000) >> 16;
+        lba_io[3] = (lba & 0xFF000000) >> 24;
+        lba_io[4] = lba_io[5] = 0;
+        head = 0;       /* Lower 4 bits of HDDEVSEL are not used here. */
+    } else if (ide_devices[drive].capabilities & 0x200) {
+        /* LBA28 */
+        lba_mode = 1;
+        lba_io[0] = (lba & 0x00000FF);
+        lba_io[1] = (lba & 0x000FF00) >> 8;
+        lba_io[2] = (lba & 0x0FF0000) >> 16;
+        lba_io[3] = lba_io[4] = lba_io[5] = 0;
+        head      = (lba & 0xF000000) >> 24;
+    } else {
+        /* CHS */
+        lba_mode = 0;
+        sect      = (lba % 63) + 1;
+        cyl       = (lba + 1 - sect) / (16 * 63);
+        lba_io[0] = sect;
+        lba_io[1] = (cyl >> 0) & 0xFF;
+        lba_io[2] = (cyl >> 8) & 0xFF;
+        lba_io[3] = lba_io[4] = lba_io[5];
+        head      = (lba + 1 - sect) % (16 * 63) / 63;
+    }
+
+    /* See if drive supports DMA. */
+    dma = 0; /* We don't support it! */
+
+    /* Wait if the drive is busy. */
+    while (ide_read(channel, ATA_REG_STATUS) & ATA_SR_BSY);
+
+    /* Select drive from the controller. */
+    ide_write(channel, ATA_REG_HDDEVSEL,
+            (lba_mode == 0 ? 0xA0 : 0xE0) | (slavebit << 4) | head);
+
+    /* Write Parameters to registers. */
+    if (lba_mode == 2) {
+        ide_write(channel, ATA_REG_SECCOUNT1, 0);
+        ide_write(channel, ATA_REG_LBA3, lba_io[3]);
+        ide_write(channel, ATA_REG_LBA4, lba_io[4]);
+        ide_write(channel, ATA_REG_LBA5, lba_io[5]);
+    }
+    ide_write(channel, ATA_REG_SECCOUNT0, numsects);
+    ide_write(channel, ATA_REG_LBA0, lba_io[0]);
+    ide_write(channel, ATA_REG_LBA1, lba_io[1]);
+    ide_write(channel, ATA_REG_LBA2, lba_io[2]);
+
+    if (lba_mode == 0 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
+    if (lba_mode == 1 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
+    if (lba_mode == 2 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO_EXT;
+    if (lba_mode == 0 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA;
+    if (lba_mode == 1 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA;
+    if (lba_mode == 2 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA_EXT;
+    if (lba_mode == 0 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
+    if (lba_mode == 1 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
+    if (lba_mode == 2 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO_EXT;
+    if (lba_mode == 0 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA;
+    if (lba_mode == 1 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA;
+    if (lba_mode == 2 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA_EXT;
+    ide_write(channel, ATA_REG_COMMAND, cmd);
+
+    if (dma) {
+        /* DMA read or write should be here. */
+        return 0;
+    }
+
+    if (direction == 0) {
+        /* PIO Read */
+        for (i = 0; i < numsects; ++i) {
+            if ((err = ide_polling(channel, 1)))
+                return err;
+            asm volatile ("pushw %es");
+            asm volatile ("mov %%ax, %%es" : : "a"(selector));
+            /* Receive data. */
+            asm volatile ("rep insw" : : "c"(words), "d"(bus), "D"(edi));
+            asm volatile ("popw %es");
+            edi += (words*2);
+        }
+    } else {
+        /* PIO Write */
+        for (i = 0; i < numsects; ++i) {
+            ide_polling(channel, 0);
+            asm volatile ("pushw %ds");
+            asm volatile ("mov %%ax, %%ds" : : "a"(selector));
+            asm volatile ("rep outsw" : : "c"(words), "d"(bus), "S"(edi));
+            asm volatile ("popw %ds");
+            edi += (words * 2);
+        }
+        ide_write(channel, ATA_REG_COMMAND,
+                lba_mode == 2 ? ATA_CMD_CACHE_FLUSH_EXT : ATA_CMD_CACHE_FLUSH);
+        ide_polling(channel, 0);
+    }
+    return 0;
+}
