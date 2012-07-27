@@ -8,3 +8,4 @@ gen-initrd
 inird.img
 tools/gen-keymap
 .todo
+harddisk

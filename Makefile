@@ -4,6 +4,7 @@ SOURCES=src/boot.s \
 	src/descriptor-tables.c \
 	src/fs.c \
 	src/gdt.s \
+	src/ide.c \
 	src/initrd.c \
 	src/interrupt.s \
 	src/isr.c \
@@ -92,7 +93,7 @@ debug-bochs: floppy.img
 	@bochs -q 'gdbstub: enabled=1'
 
 run-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD)
+	@qemu -kernel $(KERNEL) -initrd $(INITRD) -hda harddisk
 
 debug-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD) -s -S
+	@qemu -kernel $(KERNEL) -initrd $(INITRD) -s -S -hda harddisk

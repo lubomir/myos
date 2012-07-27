@@ -9,6 +9,7 @@
 #include "common.h"
 #include "descriptor-tables.h"
 #include "fs.h"
+#include "ide.h"
 #include "initrd.h"
 #include "kb.h"
 #include "kheap.h"
@@ -57,6 +58,8 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     u8int keymap[256];
     read_fs(keymap_file, 0, 256, keymap);
     initialise_keyboard(keymap);
+
+    initialise_ide(0x1F0, 0x3F4, 0x170, 0x374, 0x000);
 
     return 0;
 }
