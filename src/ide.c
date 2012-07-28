@@ -63,10 +63,15 @@
 
 /* When selecting drives, the interface type and master/slave setting
  * should be specified. */
-#define IDE_ATA     0x00
-#define IDE_ATAPI   0x01
-#define IDE_MASTER  0x00
-#define IDE_SLAVE   0x01
+typedef enum {
+    IDE_ATA     = 0x00,
+    IDE_ATAPI   = 0x01
+} ide_interface_t;
+
+typedef enum {
+    IDE_MASTER  = 0x00,
+    IDE_SLAVE   = 0x01
+} ide_drive_t;
 
 /* The Task File is a range of 8 ports which are offset from base address of
  * primary and/or secondary channel. */
@@ -115,9 +120,9 @@ struct ide_device {
     /* 0 (Primary channel) or 1 (Secondary Channel). */
     u8int channel;
     /* 0 (Master Drive) or 1 (Slave Drive). */
-    u8int drive;
+    ide_drive_t drive;
     /* 0 (ATA) or 1 (ATAPI). */
-    u16int type;
+    ide_interface_t type;
     /* Drive signature. */
     u16int signature;
     /* Features. */
@@ -308,7 +313,8 @@ void initialise_ide(u32int bar0, u32int bar1,
     /* Detect ATA-ATAPI devices. */
     for (i = 0; i < 2; ++i) {
         for (j = 0; j < 2; ++j) {
-            u8int err = 0, type = IDE_ATA, status;
+            u8int err = 0, status;
+            ide_interface_t type = IDE_ATA;
             /* Assume no drive. */
             ide_devices[count].reserved = 0;
 
