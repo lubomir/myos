@@ -138,6 +138,21 @@ struct ide_device {
 void ide_write(u8int channel, u8int reg, u8int data);
 
 /*
+ */
+static u16int get_port_for_register(u8int channel, u8int reg)
+{
+    if (reg < 0x08)
+        return channels[channel].base + reg - 0x00;
+    else if (reg < 0x0C)
+        return channels[channel].base + reg - 0x06;
+    else if (reg < 0x0E)
+        return channels[channel].ctrl + reg - 0x0A;
+    else if (reg < 0x16)
+        return channels[channel].bmide + reg - 0x0E;
+    PANIC("Weird register number!");
+}
+
+/*
  * Read data from channel and register.
  */
 u8int ide_read(u8int channel, u8int reg)
@@ -146,14 +161,7 @@ u8int ide_read(u8int channel, u8int reg)
     if (reg > 0x07 && reg < 0x0C)
         ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIen);
 
-    if (reg < 0x08)
-        result = inb(channels[channel].base + reg - 0x00);
-    else if (reg < 0x0C)
-        result = inb(channels[channel].base + reg - 0x06);
-    else if (reg < 0x0E)
-        result = inb(channels[channel].ctrl + reg - 0x0A);
-    else if (reg < 0x16)
-        result = inb(channels[channel].bmide + reg - 0x0E);
+    result = inb(get_port_for_register(channel, reg));
 
     if (reg > 0x07 && reg < 0x0C)
         ide_write(channel, ATA_REG_CONTROL, channels[channel].nIen);
@@ -169,14 +177,7 @@ void ide_write(u8int channel, u8int reg, u8int data)
     if (reg > 0x07 && reg < 0x0C)
         ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIen);
 
-    if (reg < 0x08)
-        outb(channels[channel].base + reg - 0x00, data);
-    else if (reg < 0x0C)
-        outb(channels[channel].base + reg - 0x06, data);
-    else if (reg < 0x0E)
-        outb(channels[channel].ctrl + reg - 0x0A, data);
-    else if (reg < 0x16)
-        outb(channels[channel].bmide + reg - 0x0E, data);
+    outb(get_port_for_register(channel, reg), data);
 
     if (reg > 0x07 && reg < 0x0C)
         ide_write(channel, ATA_REG_CONTROL, channels[channel].nIen);
@@ -197,14 +198,7 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
 
     asm volatile ("pushw %es; movw %ds, %ax; movw %ax, %es");
 
-    if (reg < 0x08)
-        insl(channels[channel].base + reg - 0x00, buffer, quads);
-    else if (reg < 0x0C)
-        insl(channels[channel].base + reg - 0x06, buffer, quads);
-    else if (reg < 0x0E)
-        insl(channels[channel].ctrl + reg - 0x0A, buffer, quads);
-    else if (reg < 0x16)
-        insl(channels[channel].bmide + reg - 0x0E, buffer, quads);
+    insl(get_port_for_register(channel, reg), buffer, quads);
 
     asm volatile ("popw %es");
 
