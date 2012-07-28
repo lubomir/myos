@@ -8,7 +8,7 @@
 
 #include "monitor.h"
 
-static void syscall_handler(registers_t regs);
+static void syscall_handler(registers_t *regs);
 
 static void *syscalls[2] = {
     &monitor_write,
@@ -21,15 +21,15 @@ void initialise_syscalls(void)
     register_interrupt_handler(0x80, &syscall_handler);
 }
 
-void syscall_handler(registers_t regs)
+void syscall_handler(registers_t *regs)
 {
     /* First check if the requested syscall number is valid.
      * The syscall number is found in EAX. */
-    if (regs.eax >= num_syscalls)
+    if (regs->eax >= num_syscalls)
         PANIC("Bad syscall");   /* This should rather be simple return. */
 
     /* Get the required syscall location. */
-    void *location = syscalls[regs.eax];
+    void *location = syscalls[regs->eax];
 
     /* We don't know how many parameters the function wants, so we just push
      * them all onto the stack in the correct order. The function will use
@@ -48,10 +48,10 @@ void syscall_handler(registers_t regs)
             "pop %%ebx;"
             "pop %%ebx;"
             : "=a" (ret)
-            : "r" (regs.edi), "r" (regs.esi), "r" (regs.edx),
-              "r" (regs.ecx), "r" (regs.ebx), "r" (location)
+            : "r" (regs->edi), "r" (regs->esi), "r" (regs->edx),
+              "r" (regs->ecx), "r" (regs->ebx), "r" (location)
             );
-    regs.eax = ret;
+    regs->eax = ret;
 }
 
 DEFN_SYSCALL1(monitor_write, 0, const char *)

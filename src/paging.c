@@ -183,7 +183,7 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
     return 0;
 }
 
-void page_fault(registers_t regs)
+void page_fault(registers_t *regs)
 {
     /* A page fault has occurred.
      * The faulting address is stored in the CR2 register. */
@@ -191,13 +191,13 @@ void page_fault(registers_t regs)
     asm volatile ("mov %%cr2, %0" : "=r"(faulting_address));
 
     /* The error code gives us details of what happened. */
-    int present  = !(regs.err_code & 0x1);  /* Page not present */
-    int rw       = regs.err_code & 0x2;     /* Write operation? */
-    int us       = regs.err_code & 0x4;     /* Processor was in user-mode? */
-    int reserved = regs.err_code & 0x8;     /* Overwritten CPU-reseved bits
+    int present  = !(regs->err_code & 0x1); /* Page not present */
+    int rw       = regs->err_code & 0x2;    /* Write operation? */
+    int us       = regs->err_code & 0x4;    /* Processor was in user-mode? */
+    int reserved = regs->err_code & 0x8;    /* Overwritten CPU-reseved bits
                                                of page entry? */
 #if 0
-    int id       = regs.err_code & 0x10;    /* Caused by an instruction
+    int id       = regs->err_code & 0x10;   /* Caused by an instruction
                                                fetch? */
 #endif
 

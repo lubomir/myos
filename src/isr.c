@@ -28,7 +28,7 @@ void isr_handler(registers_t regs)
     u8int int_no = regs.int_no & 0xFF;
     if (interrupt_handlers[regs.int_no]) {
         isr_t handler = interrupt_handlers[int_no];
-        handler(regs);
+        handler(&regs);
     } else {
         monitor_print("Unhandled interrupt: %u\n", int_no);
         for (;;);
@@ -48,6 +48,6 @@ void irq_handler(registers_t regs)
 
     if (interrupt_handlers[regs.int_no]) {
         isr_t handler = interrupt_handlers[regs.int_no];
-        handler(regs);
+        handler(&regs);
     }
 }

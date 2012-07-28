@@ -18,7 +18,7 @@ u8int kb_state;
 #define KB_DATA 0x60
 #define KB_CTRL 0x64
 
-void keyboard_handler(registers_t regs)
+void keyboard_handler(registers_t *regs)
 {
     /* Read from the keyboard's data buffer. */
     u8int scancode = inb(KB_DATA);
