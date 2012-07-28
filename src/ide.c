@@ -152,19 +152,26 @@ static u16int get_port_for_register(u8int channel, u8int reg)
     PANIC("Weird register number!");
 }
 
+#define disable_irq(chan, reg) do { \
+    if (reg > 0x7 && reg < 0xC) \
+        ide_write(chan, ATA_REG_CONTROL, 0x80 | channels[chan].nIen); \
+} while (0)
+
+#define enable_irq(chan, reg) do { \
+    if (reg > 0x7 && reg < 0xC) \
+        ide_write(channel, ATA_REG_CONTROL, channels[chan].nIen); \
+} while (0)
+
 /*
  * Read data from channel and register.
  */
 u8int ide_read(u8int channel, u8int reg)
 {
     u8int result;
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIen);
 
+    disable_irq(channel, reg);
     result = inb(get_port_for_register(channel, reg));
-
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, channels[channel].nIen);
+    enable_irq(channel, reg);
 
     return result;
 }
@@ -174,13 +181,9 @@ u8int ide_read(u8int channel, u8int reg)
  */
 void ide_write(u8int channel, u8int reg, u8int data)
 {
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIen);
-
+    disable_irq(channel, reg);
     outb(get_port_for_register(channel, reg), data);
-
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, channels[channel].nIen);
+    enable_irq(channel, reg);
 }
 
 #define insl(port, buffer, count) \
@@ -193,8 +196,7 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
      *       ES and ESP for all of the code the compiler generates between
      *       the inline assembly blocks.
      */
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIen);
+    disable_irq(channel, reg);
 
     asm volatile ("pushw %es; movw %ds, %ax; movw %ax, %es");
 
@@ -202,8 +204,7 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
 
     asm volatile ("popw %es");
 
-    if (reg > 0x07 && reg < 0x0C)
-        ide_write(channel, ATA_REG_CONTROL, channels[channel].nIen);
+    enable_irq(channel, reg);
 }
 
 u8int ide_polling(u8int channel, u32int advanced_check)
