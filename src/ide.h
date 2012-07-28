@@ -19,6 +19,12 @@
 void initialise_ide(u32int bar0, u32int bar1,
         u32int bar2, u32int bar3, u32int bar4);
 
+/* Read or write? */
+typedef enum {
+    ATA_READ    = 0x00,
+    ATA_WRITE   = 0x01
+} ata_direction_t;
+
 /*
  * Read or write from ATA drive.
  *
@@ -30,7 +36,7 @@ void initialise_ide(u32int bar0, u32int bar1,
  * @param selector  the segment selector to read from or write to
  * @param offset    offset in that segment
  */
-u8int ide_ata_access(u8int direction, u8int drive, u32int lba,
+u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int selector, u8int edi);
 
 #endif /* end of include guard: IDE_H */

@@ -90,8 +90,6 @@
 
 #define ATA_PRIMARY     0x00
 #define ATA_SECONDARY   0x01
-#define ATA_READ        0x00
-#define ATA_WRITE       0x01
 
 struct ide_channel_registers {
     /* IO Base. */
@@ -398,7 +396,7 @@ void initialise_ide(u32int bar0, u32int bar1,
     }
 }
 
-u8int ide_ata_access(u8int direction, u8int drive, u32int lba,
+u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int selector, u8int edi)
 {
     u8int lba_mode, dma, cmd;
