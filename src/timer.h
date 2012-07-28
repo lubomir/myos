@@ -77,6 +77,8 @@
  * Initialize timer to fire with given frequency.
  * NOTE: interrupts must be enabled for timer to work. Use 'sti' instruction
  * to enable them.
+ *
+ * @param frequency     requested frequency in Hz
  */
 void init_timer(u32int frequency);
 
