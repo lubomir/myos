@@ -1,5 +1,5 @@
 /*
- * fs.c -- defines functions to access a file system
+ * fs.c -- Defines functions for accessing a file system.
  * Written for JamesM's kernel development tutorial.
  */
 

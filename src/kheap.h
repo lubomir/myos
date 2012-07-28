@@ -1,5 +1,6 @@
 /*
- * kheap.h -- defines interface to basic kernel heap
+ * kheap.h -- Defines interface to basic kernel heap.
+ * Taken from JamesM's kernel development tutorial.
  */
 
 #ifndef KHEAP_H

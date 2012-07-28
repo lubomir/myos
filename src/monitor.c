@@ -1,5 +1,5 @@
 /*
- * monitor.c -- defines functions to control the monitor.
+ * monitor.c -- Defines functions to control the monitor.
  * From JamesM's kernel development tutorials.
  */
 

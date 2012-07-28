@@ -1,5 +1,5 @@
 /*
- * monitor.h -- defines the interface for monitor.h
+ * monitor.h -- Defines the interface for printing to monitor.
  * From JamesM's kernel development tutorials.
  */
 

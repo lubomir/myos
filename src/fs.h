@@ -1,5 +1,5 @@
 /*
- * fs.h -- defines interface and structures to access a file system
+ * fs.h -- Defines interface and structures for accessing a file system.
  * Written for JamesM's kernel development tutorial.
  */
 

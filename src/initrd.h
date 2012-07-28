@@ -1,5 +1,5 @@
 /*
- * initrd.h -- defines the interface for and structures relating to the
+ * initrd.h -- Defines the interface for and structures relating to the
  *             initial ramdisk.
  * Written for JamesM's kernel development tutorial.
  */

@@ -1,5 +1,5 @@
 /*
- * ordered-array.c -- implementation for creating, inserting and deleting
+ * ordered-array.c -- Defines functions for creating, inserting and deleting
  *                    from ordered arrays.
  * Written for JamesM's kernel development tutorials.
  */

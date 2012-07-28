@@ -1,5 +1,6 @@
 /*
- * kheap.c -- defines basic kernel heap
+ * kheap.c -- Defines basic kernel heap.
+ * Taken from JamesM's kernel development tutorial.
  */
 
 #include "kheap.h"

@@ -1,5 +1,5 @@
 /*
- * common.h -- defines typedefs and some global functions.
+ * common.h -- Defines typedefs and some global functions.
  * From JamesM's kernel development tutorials.
  */
 

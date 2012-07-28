@@ -1,6 +1,6 @@
 /*
- * kb.c -- implementation of basic keyboard driver.
- * Taken from Bran's kernel development tutorial.
+ * kb.c -- Provides implementation of basic keyboard driver.
+ * Adapted from Bran's kernel development tutorial.
  */
 
 #include <string.h>

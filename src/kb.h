@@ -1,6 +1,6 @@
 /*
- * kb.h -- defines functions for and structures relating to keyboard.
- * Taken from Bran's kernel development tutorial.
+ * kb.h -- Defines functions for and structures relating to keyboard.
+ * Adapted from Bran's kernel development tutorial.
  */
 
 #ifndef KB_H

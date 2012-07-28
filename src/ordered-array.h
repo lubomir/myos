@@ -1,5 +1,5 @@
 /*
- * ordered-array.h -- interface for creating, inserting and deleting
+ * ordered-array.h -- Defines interface for creating, inserting and deleting
  *                    from ordered arrays.
  * Written for JamesM's kernel development tutorials.
  */

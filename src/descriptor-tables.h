@@ -1,6 +1,6 @@
 /*
- * descriptor-table.c -- defines Global Descriptor Table and Interrubt
- * Descriptor Table.
+ * descriptor-table.c -- Defines Global Descriptor Table and Interrupt
+ *                       Descriptor Table.
  * From JamesM's kernel development tutorials.
  */
 

@@ -1,5 +1,5 @@
 /*
- * descriptor-tables.c -- initialises the GDT and IDT and defines the default
+ * descriptor-tables.c -- Initialises the GDT and IDT and defines the default
  *                        ISR and IRQ handler.
  * From JamesM's kernel development tutorials.
  */

@@ -1,5 +1,5 @@
 /*
- * initrd.x -- defines the functions relating to the initial ramdisk.
+ * initrd.x -- Defines the functions relating to the initial ramdisk.
  * Written for JamesM's kernel development tutorial.
  */
 

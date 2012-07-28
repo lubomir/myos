@@ -1,5 +1,5 @@
 /*
- * common.c -- defines some global functions.
+ * common.c -- Defines some global functions.
  * From JamesM's kernel development tutorials.
  */
 

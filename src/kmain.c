@@ -1,6 +1,6 @@
 /*
- * main.c -- defines the C-code kernel entry point, calls the initialization
- * routines.
+ * main.c -- Defines the C-code kernel entry point, calls the initialization
+ *           routines.
  * Copied from JamesM's tutorials.
  */
 
