@@ -400,7 +400,7 @@ void initialise_ide(u32int bar0, u32int bar1,
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int selector, u8int edi)
 {
-    u8int lba_mode, dma, cmd;
+    u8int lba_mode, cmd;
     u8int lba_io[6];
     u32int channel  = ide_devices[drive].channel;
     u32int slavebit = ide_devices[drive].drive;
@@ -446,9 +446,6 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         head      = (lba + 1 - sect) % (16 * 63) / 63;
     }
 
-    /* See if drive supports DMA. */
-    dma = 0; /* We don't support it! */
-
     /* Wait if the drive is busy. */
     while (ide_read(channel, ATA_REG_STATUS) & ATA_SR_BSY);
 
@@ -468,24 +465,13 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
     ide_write(channel, ATA_REG_LBA1, lba_io[1]);
     ide_write(channel, ATA_REG_LBA2, lba_io[2]);
 
-    if (lba_mode == 0 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
-    if (lba_mode == 1 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
-    if (lba_mode == 2 && dma == 0 && direction == 0) cmd = ATA_CMD_READ_PIO_EXT;
-    if (lba_mode == 0 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA;
-    if (lba_mode == 1 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA;
-    if (lba_mode == 2 && dma == 1 && direction == 0) cmd = ATA_CMD_READ_DMA_EXT;
-    if (lba_mode == 0 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
-    if (lba_mode == 1 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
-    if (lba_mode == 2 && dma == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO_EXT;
-    if (lba_mode == 0 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA;
-    if (lba_mode == 1 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA;
-    if (lba_mode == 2 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA_EXT;
+    if (lba_mode == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
+    if (lba_mode == 1 && direction == 0) cmd = ATA_CMD_READ_PIO;
+    if (lba_mode == 2 && direction == 0) cmd = ATA_CMD_READ_PIO_EXT;
+    if (lba_mode == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
+    if (lba_mode == 1 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
+    if (lba_mode == 2 && direction == 1) cmd = ATA_CMD_WRITE_PIO_EXT;
     ide_write(channel, ATA_REG_COMMAND, cmd);
-
-    if (dma) {
-        /* DMA read or write should be here. */
-        return 0;
-    }
 
     if (direction == 0) {
         /* PIO Read */
