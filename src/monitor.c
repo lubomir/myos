@@ -147,12 +147,16 @@ static u32int log_base(u32int n, u32int base)
     return exp;
 }
 
-void monitor_write_num(u32int n, u32int base, u8int c)
+void monitor_write_num(u32int n, u32int base, u8int c, u8int fwidth, char pad)
 {
     u8int digit, printed = 0;
     /* Maximum multiple of base that fits into 32 bits. */
     u32int max = base == 16 ? 0x1000000 :
         (base == 10 ? 1000000000 : 010000000000);
+    u8int len = log_base(n, base);
+    while (fwidth-- > len) {
+        monitor_put(pad);
+    }
 
     while (max) {
         digit = (n / max) % base;
@@ -170,13 +174,28 @@ void monitor_write_num(u32int n, u32int base, u8int c)
     }
 }
 
+/*
+ * Convert initial part of string to unsigned integer.
+ * The leading digits in buffer will be skipped.
+ */
+static u8int atoi_skip(const char **buf)
+{
+    u8int val = 0;
+    while (*buf[0] >= '0' && *buf[0] <= '9') {
+        val = val * 10 + *buf[0] - '0';
+        (*buf)++;
+    }
+    return val;
+}
+
 void monitor_print(const char *fmt, ...)
 {
     va_list ap;
     u32int num;
     s32int snum;
+    u8int fwidth, len;
     const char *str;
-    char c;
+    char c, pad;
 
     va_start(ap, fmt);
     while (*fmt) {
@@ -186,24 +205,33 @@ void monitor_print(const char *fmt, ...)
         }
         u8int use_upcase = 0;
         fmt++;
+
+        pad = ' ';
+        if (*fmt == '0')
+            pad = '0';
+        fwidth = atoi_skip(&fmt);
+
         switch (*fmt++) {
         case 'u':
             num = va_arg(ap, u32int);
-            monitor_write_dec(num);
+            monitor_write_num(num, 10, '0', fwidth, pad);
             break;
         case 'X':
             use_upcase = 1;
         case 'x':
             num = va_arg(ap, u32int);
-            monitor_write_num(num, 16, use_upcase ? 'A' : 'a');
+            monitor_write_num(num, 16, use_upcase ? 'A' : 'a', fwidth, pad);
             break;
         case 'o':
             num = va_arg(ap, u32int);
-            monitor_write_num(num, 8, '0');
+            monitor_write_num(num, 8, '0', fwidth, pad);
             break;
         case 'd':
         case 'i':
             snum = va_arg(ap, s32int);
+            len = log_base(snum < 0 ? -snum : snum, 10) + (snum < 0 ? 1 : 0);
+            while (fwidth-- > len)
+                monitor_put(pad);
             if (snum < 0) {
                 monitor_put('-');
                 snum *= -1;
