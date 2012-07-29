@@ -10,7 +10,7 @@
 #define ATA_SR_BSY  0x80    /* Drive is preparing to send/receive data. */
 #define ATA_SR_DRDY 0x40    /* Bit is clear when drive is spun down. */
 #define ATA_SR_DF   0x20    /* Drive Fault error. */
-#define ATA_SR_DSC  0x10    /* Overlapped Mode Service Request. */ /* TODO */
+#define ATA_SR_DSC  0x10    /* Command dependent bit. */
 #define ATA_SR_DRQ  0x08    /* Ready to transfer data. */
 #define ATA_SR_CORR 0x04    /* Unused. */
 #define ATA_SR_IDX  0x02    /* Unused. */
@@ -451,7 +451,7 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
 
     /* Select drive from the controller. */
     ide_write(channel, ATA_REG_HDDEVSEL,
-            (lba_mode == 0 ? 0xA0 : 0xE0) | (slavebit << 4) | head);
+            (lba_mode != 0 ? 0x40 : 0) | (slavebit << 4) | head);
 
     /* Write Parameters to registers. */
     if (lba_mode == 2) {
