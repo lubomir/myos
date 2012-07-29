@@ -465,12 +465,12 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
     ide_write(channel, ATA_REG_LBA1, lba_io[1]);
     ide_write(channel, ATA_REG_LBA2, lba_io[2]);
 
-    if (lba_mode == 0 && direction == 0) cmd = ATA_CMD_READ_PIO;
-    if (lba_mode == 1 && direction == 0) cmd = ATA_CMD_READ_PIO;
-    if (lba_mode == 2 && direction == 0) cmd = ATA_CMD_READ_PIO_EXT;
-    if (lba_mode == 0 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
-    if (lba_mode == 1 && direction == 1) cmd = ATA_CMD_WRITE_PIO;
-    if (lba_mode == 2 && direction == 1) cmd = ATA_CMD_WRITE_PIO_EXT;
+    static u8int commands[2][2] = {
+        /* ATA_READ */  {ATA_CMD_READ_PIO, ATA_CMD_READ_PIO_EXT},
+        /* ATA_WRITE */ {ATA_CMD_WRITE_PIO, ATA_CMD_WRITE_PIO_EXT}
+    };
+    cmd = commands[direction][lba_mode == 2];
+
     ide_write(channel, ATA_REG_COMMAND, cmd);
 
     if (direction == 0) {
