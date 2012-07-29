@@ -481,7 +481,7 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
             u32int j;
             for (j = 0; j < words; ++j)
                 buf[j] = inw(bus);
-            buf += words * 2;
+            buf += words;
         }
     } else {
         /* PIO Write */
