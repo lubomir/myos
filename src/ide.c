@@ -398,7 +398,7 @@ void initialise_ide(u32int bar0, u32int bar1,
 }
 
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
-        u8int numsects, u16int selector, u8int edi)
+        u8int numsects, u16int selector, u8int edi, u16int *buf)
 {
     u8int lba_mode, cmd;
     u8int lba_io[6];
@@ -478,12 +478,10 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         for (i = 0; i < numsects; ++i) {
             if ((err = ide_polling(channel, 1)))
                 return err;
-            asm volatile ("pushw %es");
-            asm volatile ("mov %%ax, %%es" : : "a"(selector));
-            /* Receive data. */
-            asm volatile ("rep insw" : : "c"(words), "d"(bus), "D"(edi));
-            asm volatile ("popw %es");
-            edi += (words*2);
+            u32int j;
+            for (j = 0; j < words; ++j)
+                buf[j] = inw(bus);
+            buf += words * 2;
         }
     } else {
         /* PIO Write */

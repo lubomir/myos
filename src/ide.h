@@ -35,8 +35,9 @@ typedef enum {
  *                  read 256 sectors at once
  * @param selector  the segment selector to read from or write to
  * @param offset    offset in that segment
+ * @param buf       buffer to write to or read from
  */
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
-        u8int numsects, u16int selector, u8int edi);
+        u8int numsects, u16int selector, u8int edi, u16int *buf);
 
 #endif /* end of include guard: IDE_H */
