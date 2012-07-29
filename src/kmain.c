@@ -61,5 +61,14 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
 
     initialise_ide(0x1F0, 0x3F4, 0x170, 0x374, 0x000);
 
+    u8int bytes[2 * 256];
+    ide_ata_access(ATA_READ, 0, 0, 1, (u16int *) bytes);
+    monitor_print("read 0x%x ?= should be 0x80\n", bytes[0x1BE]);
+
+    bytes[0] = 0xAB;
+    bytes[1] = 0xBA;
+
+    ide_ata_access(ATA_WRITE, 0, 0, 1, (u16int *) bytes);
+
     return 0;
 }
