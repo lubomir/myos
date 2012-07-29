@@ -398,7 +398,7 @@ void initialise_ide(u32int bar0, u32int bar1,
 }
 
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
-        u8int numsects, u16int selector, u8int edi, u16int *buf)
+        u8int numsects, u16int *buf)
 {
     u8int lba_mode, cmd;
     u8int lba_io[6];
