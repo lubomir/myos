@@ -31,6 +31,11 @@ typedef          char  s8int;
 void outb(u16int port, u8int value);
 
 /**
+ * Write a word to the specified port.
+ */
+void outw(u16int port, u16int value);
+
+/**
  * Read a byte from specified port.
  *
  * @param port  port to read from
