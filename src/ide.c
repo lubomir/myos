@@ -487,11 +487,11 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         /* PIO Write */
         for (i = 0; i < numsects; ++i) {
             ide_polling(channel, 0);
-            asm volatile ("pushw %ds");
-            asm volatile ("mov %%ax, %%ds" : : "a"(selector));
-            asm volatile ("rep outsw" : : "c"(words), "d"(bus), "S"(edi));
-            asm volatile ("popw %ds");
-            edi += (words * 2);
+            u32int j = 0;
+            for (j = 0; j < words; ++j) {
+                outw(bus, buf[j]);
+            }
+            buf += words;
         }
         ide_write(channel, ATA_REG_COMMAND,
                 lba_mode == 2 ? ATA_CMD_CACHE_FLUSH_EXT : ATA_CMD_CACHE_FLUSH);
