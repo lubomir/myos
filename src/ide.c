@@ -404,7 +404,7 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
     u8int lba_io[6];
     u32int channel  = ide_devices[drive].channel;
     u32int slavebit = ide_devices[drive].drive;
-    u32int bus      = channels[channel].base;
+    u16int bus      = channels[channel].base;
     /* Almost every ATA drive has a sector size of 512 bytes. */
     u32int words    = 256;
     u16int cyl, i;
@@ -478,19 +478,14 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         for (i = 0; i < numsects; ++i) {
             if ((err = ide_polling(channel, 1)))
                 return err;
-            u32int j;
-            for (j = 0; j < words; ++j)
-                buf[j] = inw(bus);
+            asm volatile ("rep insw" : : "c"(words), "D"(buf), "d"(bus));
             buf += words;
         }
     } else {
         /* PIO Write */
         for (i = 0; i < numsects; ++i) {
             ide_polling(channel, 0);
-            u32int j = 0;
-            for (j = 0; j < words; ++j) {
-                outw(bus, buf[j]);
-            }
+            asm volatile ("rep outsw" : : "c"(words), "S"(buf), "d"(bus));
             buf += words;
         }
         ide_write(channel, ATA_REG_COMMAND,
