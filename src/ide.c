@@ -196,6 +196,12 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
     enable_irq(channel, reg);
 }
 
+/*
+ * Wait for BSY bit to be cleared.
+ *
+ * If advanced_check is non-zero, other bits are checked. If any error is
+ * detected, this function returns non-zero value.
+ */
 u8int ide_polling(u8int channel, u32int advanced_check)
 {
     /* Delay 400 ns for BSY to be set. */
