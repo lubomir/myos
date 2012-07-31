@@ -277,7 +277,7 @@ u8int ide_print_error(u32int drive, u8int err)
     }
     monitor_print("\n     - [%s %s] %s\n",
             PS[ide_devices[drive].channel],
-            MS[ide_devices[drive].channel],
+            MS[ide_devices[drive].drive],
             ide_devices[drive].model);
 
     return err;
