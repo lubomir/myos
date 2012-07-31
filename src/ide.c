@@ -186,23 +186,12 @@ void ide_write(u8int channel, u8int reg, u8int data)
     enable_irq(channel, reg);
 }
 
-#define insl(port, buffer, count) \
-    asm volatile ("cld; rep; insl" :: "D"(buffer), "d"(port), "c"(count))
-
-
 void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
 {
-    /* TODO: This code contains a serious bug. The inline assembly trashes
-     *       ES and ESP for all of the code the compiler generates between
-     *       the inline assembly blocks.
-     */
     disable_irq(channel, reg);
 
-    asm volatile ("pushw %es; movw %ds, %ax; movw %ax, %es");
-
-    insl(get_port_for_register(channel, reg), buffer, quads);
-
-    asm volatile ("popw %es");
+    u16int port = get_port_for_register(channel, reg);
+    asm volatile ("rep insl" : : "D"(buffer), "d"(port), "c"(quads));
 
     enable_irq(channel, reg);
 }
