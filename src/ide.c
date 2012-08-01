@@ -451,7 +451,7 @@ static u8int ide_setup_addr(u8int drive, u32int lba, u8int *regs, u8int *head)
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int *buf)
 {
-    u8int lba_mode, cmd;
+    u8int lba_mode;
     u8int lba_io[4];
     u32int channel  = ide_devices[drive].channel;
     u32int slavebit = ide_devices[drive].drive;
@@ -492,9 +492,8 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         /* ATA_READ */  {ATA_CMD_READ_PIO, ATA_CMD_READ_PIO_EXT},
         /* ATA_WRITE */ {ATA_CMD_WRITE_PIO, ATA_CMD_WRITE_PIO_EXT}
     };
-    cmd = commands[direction][lba_mode == 2];
 
-    ide_write(channel, ATA_REG_COMMAND, cmd);
+    ide_write(channel, ATA_REG_COMMAND, commands[direction][lba_mode == 2]);
 
     if (direction == 0) {
         /* PIO Read */
