@@ -507,6 +507,7 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         /* PIO Write */
         for (i = 0; i < numsects; ++i) {
             ide_polling(channel, 0);
+            /* FIXME: this might be too fast for some drives. */
             asm volatile ("rep outsw" : : "c"(words), "S"(buf), "d"(bus));
             buf += words;
         }
