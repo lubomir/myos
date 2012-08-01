@@ -16,6 +16,7 @@
 #include "monitor.h"
 #include "multiboot.h"
 #include "paging.h"
+#include "partition-table.h"
 #include "task.h"
 #include "timer.h"
 #include "syscall.h"
@@ -61,14 +62,17 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
 
     initialise_ide();
 
-    u8int bytes[2 * 256];
-    ide_ata_access(ATA_READ, 0, 0, 1, (u16int *) bytes);
-    monitor_print("read 0x%02x ?= should be 0x80\n", bytes[0x1BE]);
+    pt_entry_t *ptable = partition_load(0);
 
-    bytes[0] = 0xAB;
-    bytes[1] = 0xBA;
-
-    ide_ata_access(ATA_WRITE, 0, 0, 1, (u16int *) bytes);
+    u8int i;
+    for (i = 0; i < 4; ++i) {
+        monitor_print("Found partition %u: %s[%u] starting at %u, %u sectors\n",
+                i,
+                ptable[i].boot ? "[bootable] " : "",
+                ptable[i].sysid,
+                ptable[i].relsec,
+                ptable[i].numsec);
+    }
 
     return 0;
 }

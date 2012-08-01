@@ -14,6 +14,7 @@ SOURCES=src/boot.s \
 	src/monitor.c \
 	src/ordered-array.c \
 	src/paging.c \
+	src/partition-table.c \
 	src/process.s \
 	src/syscall.c \
 	src/task.c \

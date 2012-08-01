@@ -42,9 +42,15 @@ struct pt_entry {
      * LBA value. */
     u32int relsec;
     /* Total number of sectors in a partition. */
-    u32int numsect;
+    u32int numsec;
 } __attribute__((packed));
 
 typedef struct pt_entry pt_entry_t;
+
+/*
+ * Load a partition table from specified drive. Returns newly allocated array
+ * of four pt_entry_t's. All unused entries are all zeroed.
+ */
+pt_entry_t * partition_load(u8int drive);
 
 #endif /* end of include guard: UNTITLED_H */
