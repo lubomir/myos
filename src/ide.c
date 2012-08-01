@@ -105,16 +105,12 @@ struct ide_channel_registers {
     u16int ctrl;
     /* Bus Master IDE. */
     u16int bmide;
-    /* nIEN (No Interrupt). */
+    /* nIEN (No Interrupt). 0 = Interrupts enabled, 2 = Interrupts disabled */
     u8int  nIen;
 } channels[2];
 
 /* Buffer to hold the identification space. */
 u8int ide_buf[2048] = {0};
-/* Variable indicating whether IRQ was invoked. */
-static u8int ide_irq_invoked = 0;
-/* Array of 6 words (12 bytes) for ATAPI drives. */
-static u8int atapi_packet[12] = { 0xA8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 struct ide_device {
     /* 0 (empty) or 1 (this drive exists). */
@@ -451,18 +447,15 @@ static u8int ide_setup_addr(u8int drive, u32int lba, u8int *regs, u8int *head)
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int *buf)
 {
-    u8int lba_mode;
-    u8int lba_io[4];
+    u8int lba_mode, head, err, lba_io[4];
     u32int channel  = ide_devices[drive].channel;
     u32int slavebit = ide_devices[drive].drive;
     u16int bus      = channels[channel].base;
     /* Almost every ATA drive has a sector size of 512 bytes. */
     u32int words    = 256;
     u16int i;
-    u8int head, err;
 
     /* Disable IRQ. */
-    ide_irq_invoked = 0;
     channels[channel].nIen = 2;
     ide_write(channel, ATA_REG_CONTROL, 2);
 
