@@ -283,18 +283,17 @@ u8int ide_print_error(u32int drive, u8int err)
     return err;
 }
 
-void initialise_ide(u32int bar0, u32int bar1,
-        u32int bar2, u32int bar3, u32int bar4)
+void initialise_ide(void)
 {
     int i, j, k, count = 0;
 
-    /* Detect IO Ports. */
-    channels[ATA_PRIMARY].base      = (bar0 & 0xFFFFFFFC) + 0x1F0 * (!bar0);
-    channels[ATA_PRIMARY].ctrl      = (bar1 & 0xFFFFFFFC) + 0x3F4 * (!bar1);
-    channels[ATA_SECONDARY].base    = (bar2 & 0xFFFFFFFC) + 0x170 * (!bar2);
-    channels[ATA_SECONDARY].ctrl    = (bar3 & 0xFFFFFFFC) + 0x374 * (!bar3);
-    channels[ATA_PRIMARY].bmide     = (bar4 & 0xFFFFFFFC) + 0;
-    channels[ATA_SECONDARY].bmide   = (bar4 & 0xFFFFFFFC) + 8;
+    /* Use standard IO ports. */
+    channels[ATA_PRIMARY].base      = 0x1F0;
+    channels[ATA_PRIMARY].ctrl      = 0x3F6;
+    channels[ATA_SECONDARY].base    = 0x170;
+    channels[ATA_SECONDARY].ctrl    = 0x376;
+    channels[ATA_PRIMARY].bmide     = 0;
+    channels[ATA_SECONDARY].bmide   = 8;
 
     /* Disable IRQs. */
     ide_write(ATA_PRIMARY,   ATA_REG_CONTROL, 2);

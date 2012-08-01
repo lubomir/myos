@@ -59,7 +59,7 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     read_fs(keymap_file, 0, 256, keymap);
     initialise_keyboard(keymap);
 
-    initialise_ide(0x1F0, 0x3F4, 0x170, 0x374, 0x000);
+    initialise_ide();
 
     u8int bytes[2 * 256];
     ide_ata_access(ATA_READ, 0, 0, 1, (u16int *) bytes);

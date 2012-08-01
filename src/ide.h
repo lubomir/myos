@@ -9,15 +9,8 @@
 
 /*
  * Initialise the drive.
- *
- * @param bar0  base address of primary channel
- * @param bar1  base address of primary channel control port
- * @param bar2  base address of secondary channel
- * @param bar3  base address of secondary channel control port
- * @param bar4  bus Master IDE
  */
-void initialise_ide(u32int bar0, u32int bar1,
-        u32int bar2, u32int bar3, u32int bar4);
+void initialise_ide(void);
 
 /* Read or write? */
 typedef enum {
