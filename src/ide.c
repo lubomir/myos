@@ -2,6 +2,8 @@
  * ide.c -- defines functions relating to IDE drive.
  */
 
+#include <string.h>
+
 #include "ide.h"
 #include "monitor.h"
 
@@ -403,18 +405,61 @@ void initialise_ide(void)
     }
 }
 
+/*
+ * Setup variable to be sent to controller as an address specification.
+ * NOTE: even though LBA48 addressing mode allows six byte addresses, we
+ * are currently limited by 32-bit variable for the address, so two highest
+ * bytes are always zero.
+ *
+ * @param drive which drive will be addressed
+ * @param lba   desired address
+ * @param regs  array of 6 bytes (one for each byte of LBA48)
+ * @param head  address where to store lower four bits of HDDEVSEL
+ * @return 0 for CHS, 1 for LBA28 and 2 for LBA48
+ */
+static u8int ide_setup_addr(u8int drive, u32int lba, u8int *regs, u8int *head)
+{
+    memset(regs, 0, 6);
+    regs[0] = (lba & 0x000000FF);
+    regs[1] = (lba & 0x0000FF00) >> 8;
+    regs[2] = (lba & 0x00FF0000) >> 16;
+    regs[3] = (lba & 0xFF000000) >> 24;
+
+    if (lba >= 0x10000000) {
+        /* To support address this big, LBA48 must be used. */
+        *head = 0;  /* Lower 4 bits of HDDEVSEL are not used here. */
+        return 2;
+    }
+    if (ide_devices[drive].capabilities & 0x200) {
+        /* LBA28 */
+        *head = regs[3] & 0x0F;
+        return 1;
+    }
+
+    /* Need to use CHS. */
+    u8int sector;
+    u16int cyl;
+    sector  = (lba % 63) + 1;
+    cyl     = (lba + 1 - sector) / (16 * 63);
+    regs[0] = sector;
+    regs[1] = (cyl >> 0) & 0xFF;
+    regs[2] = (cyl >> 8) & 0xFF;
+    *head   = (lba + 1 - sector) % (16 * 63) / 63;
+    return 0;
+}
+
 u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
         u8int numsects, u16int *buf)
 {
     u8int lba_mode, cmd;
-    u8int lba_io[6];
+    u8int lba_io[4];
     u32int channel  = ide_devices[drive].channel;
     u32int slavebit = ide_devices[drive].drive;
     u16int bus      = channels[channel].base;
     /* Almost every ATA drive has a sector size of 512 bytes. */
     u32int words    = 256;
-    u16int cyl, i;
-    u8int head, sect, err;
+    u16int i;
+    u8int head, err;
 
     /* Disable IRQ. */
     ide_irq_invoked = 0;
@@ -422,35 +467,7 @@ u8int ide_ata_access(ata_direction_t direction, u8int drive, u32int lba,
     ide_write(channel, ATA_REG_CONTROL, 2);
 
     /* Select addressing method. */
-    if (lba >= 0x10000000) {
-        /* Either LBA is wrong or drive must support LBA48. */
-        /* LBA48 */
-        lba_mode = 2;
-        lba_io[0] = (lba & 0x000000FF);
-        lba_io[1] = (lba & 0x0000FF00) >> 8;
-        lba_io[2] = (lba & 0x00FF0000) >> 16;
-        lba_io[3] = (lba & 0xFF000000) >> 24;
-        lba_io[4] = lba_io[5] = 0;
-        head = 0;       /* Lower 4 bits of HDDEVSEL are not used here. */
-    } else if (ide_devices[drive].capabilities & 0x200) {
-        /* LBA28 */
-        lba_mode = 1;
-        lba_io[0] = (lba & 0x00000FF);
-        lba_io[1] = (lba & 0x000FF00) >> 8;
-        lba_io[2] = (lba & 0x0FF0000) >> 16;
-        lba_io[3] = lba_io[4] = lba_io[5] = 0;
-        head      = (lba & 0xF000000) >> 24;
-    } else {
-        /* CHS */
-        lba_mode = 0;
-        sect      = (lba % 63) + 1;
-        cyl       = (lba + 1 - sect) / (16 * 63);
-        lba_io[0] = sect;
-        lba_io[1] = (cyl >> 0) & 0xFF;
-        lba_io[2] = (cyl >> 8) & 0xFF;
-        lba_io[3] = lba_io[4] = lba_io[5];
-        head      = (lba + 1 - sect) % (16 * 63) / 63;
-    }
+    lba_mode = ide_setup_addr(drive, lba, lba_io, &head);
 
     /* Wait if the drive is busy. */
     while (ide_read(channel, ATA_REG_STATUS) & ATA_SR_BSY);
