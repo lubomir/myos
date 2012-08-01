@@ -2,6 +2,7 @@
 SOURCES=src/boot.s \
 	src/common.c \
 	src/descriptor-tables.c \
+	src/fat16.c \
 	src/fs.c \
 	src/gdt.s \
 	src/ide.c \

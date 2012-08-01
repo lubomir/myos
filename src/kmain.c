@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "descriptor-tables.h"
+#include "fat16.h"
 #include "fs.h"
 #include "ide.h"
 #include "initrd.h"
@@ -64,15 +65,7 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
 
     pt_entry_t *ptable = partition_load(0);
 
-    u8int i;
-    for (i = 0; i < 4; ++i) {
-        monitor_print("Found partition %u: %s[%u] starting at %u, %u sectors\n",
-                i,
-                ptable[i].boot ? "[bootable] " : "",
-                ptable[i].sysid,
-                ptable[i].relsec,
-                ptable[i].numsec);
-    }
+    fat_setup(0, &ptable[0]);
 
     return 0;
 }
