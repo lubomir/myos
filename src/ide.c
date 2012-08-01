@@ -197,6 +197,20 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
 }
 
 /*
+ * Sleep for given number of nanoseconds. This function is implemented using
+ * reading from ALTSTATUS register of primary channel.
+ * Note that parameter should be a multiple of 100.
+ */
+static void sleep_ns(u32int ns)
+{
+    ns %= 100;
+    while (ns) {
+        ide_read(0, ATA_REG_ALTSTATUS);
+        ns -= 100;
+    }
+}
+
+/*
  * Wait for BSY bit to be cleared.
  *
  * If advanced_check is non-zero, other bits are checked. If any error is
@@ -205,9 +219,7 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
 u8int ide_polling(u8int channel, u32int advanced_check)
 {
     /* Delay 400 ns for BSY to be set. */
-    int i;
-    for (i = 0; i < 4; ++i)
-        ide_read(channel, ATA_REG_ALTSTATUS);
+    sleep_ns(400);
 
     /* Wait for BSY to be cleared. */
     while (ide_read(channel, ATA_REG_STATUS) & ATA_SR_BSY);
@@ -309,11 +321,11 @@ void initialise_ide(void)
 
             /* Select drive. */
             ide_write(i, ATA_REG_HDDEVSEL, 0xA0 | (j << 4));
-            /* TODO Wait for 1 ms. */
+            sleep_ns(1000);
 
             /* Send ATA Identify Command. */
             ide_write(i, ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
-            /* TODO sleep(1); */
+            sleep_ns(1000);
 
             /* Polling.
              * If Status == 0 ==> No device. */
