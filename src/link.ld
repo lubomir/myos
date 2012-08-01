@@ -13,7 +13,7 @@ SECTIONS
 
 	. = 0x00100000;
 
-	/* This makes sure MultiBoot header is correctly places.
+	/* This makes sure MultiBoot header is correctly placed.
 	 * Without this section GRUB might fail with Error 13 */
 	.__mbHeader : {
 		*(.__mbHeader)
