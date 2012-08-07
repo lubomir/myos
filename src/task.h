@@ -19,8 +19,7 @@
 typedef struct task {
     /** Process ID. */
     int id;
-    /** Stack and base pointers. */
-    u32int esp, ebp;
+    u32int esp /** Stack pointer */, ebp /** Base pointer */;
     /** Instruction pointer. */
     u32int eip;
     /** Page directory. */
