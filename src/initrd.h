@@ -1,6 +1,8 @@
-/*
- * initrd.h -- Defines the interface for and structures relating to the
- *             initial ramdisk.
+/**
+ * @file    initrd.h
+ *
+ * Defines the interface for and structures relating to the initial ramdisk.
+ *
  * Written for JamesM's kernel development tutorial.
  */
 
@@ -10,24 +12,28 @@
 #include "common.h"
 #include "fs.h"
 
+/** Header of initial ramdisk. */
 typedef struct {
-    u32int nfiles;
+    u32int nfiles;  /**< Number of files stored in the ramdisk. */
 } initrd_header_t;
 
+/** Header for individual file on ramdisk. */
 typedef struct {
-    /* Magic number for error checking. */
+    /** Magic number for error checking. */
     u8int magic;
-    /* Filename. */
+    /** Filename. */
     u8int name[64];
-    /* Offset in the initrd where the file starts. */
+    /** Offset in the initrd where the file starts. */
     u32int offset;
-    /* Length of the file. */
+    /** Length of the file. */
     u32int length;
 } initrd_file_header_t;
 
-/*
- * Initialises the initial ramdisk. It gets passed the address of the
- * multiboot module, and returns a completed filesystem node.
+/**
+ * Initialises the initial ramdisk.
+ *
+ * @param   address of the multiboot module
+ * @return  completed filesystem node
  */
 fs_node_t *initialise_initrd(u32int location);
 

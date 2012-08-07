@@ -1,5 +1,8 @@
-/*
- * fs.h -- Defines interface and structures for accessing a file system.
+/**
+ * @file    fs.h
+ *
+ * Defines interface and structures for accessing a file system.
+ *
  * Written for JamesM's kernel development tutorial.
  */
 
@@ -14,7 +17,7 @@
 #define FS_BLOCKDEVICE  0x04
 #define FS_PIPE         0x05
 #define FS_SYMLINK      0x06
-#define FS_MOUNTPOINT   0x08    /* Is the file an active mountpoint? */
+#define FS_MOUNTPOINT   0x08    /**< Is the file an active mountpoint? */
 
 struct fs_node;
 
@@ -26,21 +29,21 @@ typedef struct dirent * (*readdir_type_t) (struct fs_node*, u32int);
 typedef struct fs_node * (*finddir_type_t) (struct fs_node*, char *name);
 
 typedef struct fs_node {
-    /* The filename. */
+    /** The filename. */
     char name[128];
-    /* The permissions mask. */
+    /** The permissions mask. */
     u32int mask;
-    /* The owning user. */
+    /** The owning user. */
     u32int uid;
-    /* The owning group. */
+    /** The owning group. */
     u32int gid;
-    /* Includes the node type, see #defines above. */
+    /** Includes the node type, see macros above. */
     u32int flags;
-    /* This is device specific - filesystem identification. */
+    /** This is device specific - filesystem identification. */
     u32int inode;
-    /* Size of the file, in bytes. */
+    /** Size of the file, in bytes. */
     u32int length;
-    /* An implementation defined number. */
+    /** An implementation defined number. */
     u32int impl;
     
     read_type_t     read;
@@ -50,18 +53,18 @@ typedef struct fs_node {
     readdir_type_t  readdir;
     finddir_type_t  finddir;
 
-    /* Used by mountpoints and symlinks. */
+    /** Used by mountpoints and symlinks. */
     struct fs_node *ptr;
 } fs_node_t;
 
 struct dirent {
-    /* Filename. */
+    /** Filename. */
     char name[128];
-    /* I-node number. Required by POSIX. */
+    /** I-node number. Required by POSIX. */
     u32int ino;
 };
 
-/*
+/**
  * The root node of the filesystem.
  * Defined in fs.c.
  */
