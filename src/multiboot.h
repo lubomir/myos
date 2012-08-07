@@ -51,6 +51,4 @@ struct multiboot {
     u32int vbe_interface_len;
 } PACKED;
 
-typedef struct multiboot_header multiboot_header_t;
-
 #endif /* end of include guard: MULTIBOOT_H */
