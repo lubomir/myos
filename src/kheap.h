@@ -25,42 +25,6 @@
 #define HEAP_MIN_SIZE       0x70000
 
 /**
- * Header of heap section.
- */
-typedef struct {
-    /** Magic number, used for error checking and identification. */
-    u32int magic;
-    /** Type of section. 1 if this is a hole, 0 if this is a block. */
-    u8int is_hole;
-    /** Size of this block, including the end footer. */
-    u32int size;
-} header_t;
-
-/**
- * Footer of heap section.
- */
-typedef struct {
-    /** Magic number, same as in header_t. */
-    u32int magic;
-    /** Pointer to the block header. */
-    header_t *header;
-} footer_t;
-
-/*
- * These macros help simplify code that works with headers and footers.
- * They typecast their argument to pointer to a header_t or footer_t.
- */
-/** Typecast `x` to header_t. */
-#define HEADER_T(x) ((header_t *)(x))
-/** Typecast `x` to footer_t. */
-#define FOOTER_T(x) ((footer_t *)(x))
-
-/**
- * Get pointer to a footer matching given header.
- */
-#define HEADER_GET_FOOTER(h) FOOTER_T((u32int) h + h->size - sizeof(footer_t))
-
-/**
  * The heap itself.
  */
 typedef struct {
