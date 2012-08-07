@@ -20,13 +20,18 @@ typedef struct {
     /** Data segment selector. */
     u32int ds;
     /* Pushed by pusha */
-    u32int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    u32int edi /** Contents of edi */, esi /** Contents of esi */,
+           ebp /** Contents of ebp */, esp /** Contents of esp */,
+           ebx /** Contents of ebx */, edx /** Contents of edx */,
+           ecx /** Contents of ecx */, eax /** Contents of eax */;
     /** Interrupt number. */
     u32int int_no;
     /** Error code (if applicable). */
     u32int err_code;
     /* Pushed by the processor automatically. */
-    u32int eip, cs, eflags, useresp, ss;
+    u32int eip /** Instruction pointer */, cs /** Code segment selector */,
+           eflags /** Flags of the CPU */, useresp /** User stack pointer */,
+           ss /** Stack segment */;
 } registers_t;
 
 #define IRQ0    32
