@@ -11,26 +11,6 @@
 
 #include "common.h"
 
-/*
- * Access byte format:
- * | 7 | 6 5 |  4 | 3  0 |
- * | P | DPL | DT | Type |
- *
- * P    - is segment present? (1 -> Yes)
- * DPL  - descriptor privilege level - Ring 0-3
- * DT   - descriptor type
- * Type - segment type - code/data segment
- *
- * Granularity byte format:
- * | 7 | 6 | 5 | 4 | 3 0 |
- * | G | D | 0 | A | Len |
- *
- * G    - granularity (0 = 1 B, 1 = 1 kB)
- * D    - operand size (0 = 16 b, 1 = 32 b)
- * 0    - should always be zero
- * A    - available for system use (always zero)
- */
-
 /**
  * This structure contains the value of one GDT entry. We use the attribute
  * 'packed' to tell GCC not to change any of the alignment in the structure.
@@ -42,8 +22,30 @@ struct gdt_entry_struct {
     u16int base_low;
     /** The next 8 bits of the base. */
     u8int base_middle;
-    /** Access flags, determine what ring this segment can be used in. */
+    /** Access flags, determine what ring this segment can be used in.
+     * Format:
+     *
+     *      | 7 | 6 5 |  4 | 3  0 |
+     *      | P | DPL | DT | Type |
+     *
+     * + P    - is segment present? (1 -> Yes)
+     * + DPL  - descriptor privilege level - Ring 0-3
+     * + DT   - descriptor type
+     * + Type - segment type - code/data segment
+     *
+     */
     u8int access;
+    /** Granularity of the segment.
+     * Format:
+     *
+     *      | 7 | 6 | 5 | 4 | 3 0 |
+     *      | G | D | 0 | A | Len |
+     *
+     * + G    - granularity (0 = 1 B, 1 = 1 kB)
+     * + D    - operand size (0 = 16 b, 1 = 32 b)
+     * + 0    - should always be zero
+     * + A    - available for system use (always zero)
+     */
     u8int granularity;
     /** The last 8 bits of the base. */
     u8int base_high;
@@ -71,9 +73,10 @@ struct idt_entry_struct {
     /** This must always be zero */
     u8int always0;
     /** More flags.
+     * Format:
      *
-     * Format:  | 7 | 6 5 | 4   0 |
-     *          | P | DPL | 00110 |
+     *      | 7 | 6 5 | 4   0 |
+     *      | P | DPL | 00110 |
      *
      * P    - is entry present? (0 will cause "Interrupt Not Handled")
      * DPL  - privilege we expect to be called from

@@ -52,31 +52,29 @@ u16int inw(u16int port);
 #define NORETURN        __attribute__((noreturn))
 #define FORMAT(a,b,c)   __attribute__((format(a,b,c)))
 #else
-#define PACKED          /**< Defines a structure as packed. */
-#define NORETURN        /**< Defines a function as non-returning. */
-#define FORMAT(a,b,c)   /**< Defines a function as printf-like. */
+#define PACKED          /**< Defines a structure as packed */
+#define NORETURN        /**< Defines a function as non-returning */
+#define FORMAT(a,b,c)   /**< Defines a function as printf-like */
 #endif /* DOXYGEN_RUNNING */
 
-/* Master PIC IO port */
-#define PIC1            0x20
-#define PIC1_DATA       (PIC1 + 1)
-/* Slave PIC IO port */
-#define PIC2            0xA0
-#define PIC2_DATA       (PIC2 + 1)
+#define PIC1            0x20        /**< Master PIC IO port */
+#define PIC1_DATA       (PIC1+1)    /**< Master PIC data port */
+#define PIC2            0xA0        /**< Slave PIC IO port */
+#define PIC2_DATA       (PIC2+1)    /**< Slave PIC data port */
 
-#define EOI             0x20
+#define EOI             0x20        /**< End-Of-Interrupt code */
 
-#define ICW1_ICW4       0x01    /* ICW4 (not) needed */
-#define ICW1_SINGLE     0x02    /* Single (cascade) mode */
-#define ICW1_INTERVAL4  0x04    /* Call address interval 4 (8) */
-#define ICW1_LEVEL      0x08    /* Level triggered (edge) mode) */
-#define ICW1_INIT       0x10    /* Initialization - required! */
+#define ICW1_ICW4       0x01        /**< ICW4 (not) needed */
+#define ICW1_SINGLE     0x02        /**< Single (cascade) mode */
+#define ICW1_INTERVAL4  0x04        /**< Call address interval 4 (8) */
+#define ICW1_LEVEL      0x08        /**< Level triggered (edge) mode) */
+#define ICW1_INIT       0x10        /**< Initialization - required! */
 
-#define ICW4_8086       0x01    /* 8086/88 (MCS-80/85) mode */
-#define ICW4_AUTO       0x02    /* Auto (normal) EOI */
-#define ICW4_BUF_SLAVE  0x08    /* Buffered mode/slave */
-#define ICW5_BUF_MASTER 0x0C    /* BUffered mode/master */
-#define ICW_SFNM        0x10    /* Special fully nested (not) */
+#define ICW4_8086       0x01        /**< 8086/88 (MCS-80/85) mode */
+#define ICW4_AUTO       0x02        /**< Auto (normal) EOI */
+#define ICW4_BUF_SLAVE  0x08        /**< Buffered mode/slave */
+#define ICW5_BUF_MASTER 0x0C        /**< BUffered mode/master */
+#define ICW_SFNM        0x10        /**< Special fully nested (not) */
 
 /**
  * This function prints error message and enters infinite loop.
@@ -88,13 +86,13 @@ u16int inw(u16int port);
 void panic(const char *msg, const char *file, int line) NORETURN;
 
 /**
- * Accessor macro for panic() function that fills in filename and line number
- * automatically.
+ * Accessor macro for panic() function that fills in filename and line
+ * number automatically
  */
 #define PANIC(msg) do { panic(msg, __FILE__, __LINE__); } while (0)
 
 /**
- * Check that condition holds and panic if it does not.
+ * Check that condition holds and panic if it does not
  */
 #define ASSERT(exp) \
         do { if (!(exp)) PANIC("Assertion failed: "#exp); } while (0)
