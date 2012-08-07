@@ -1,3 +1,11 @@
+/**
+ * @file    multiboot.h
+ *
+ * Defines multiboot header. This header is passed to kernel by GRUB
+ * (or other boot manager).
+ *
+ * Taken from JamesM's kernel development tutorial.
+ */
 #ifndef MULTIBOOT_H
 #define MULTIBOOT_H
 
@@ -15,6 +23,7 @@
 #define MULTIBOOT_FLAG_APM      0x200
 #define MULTIBOOT_FLAG_VBE      0x400
 
+/** Structure for Multiboot header. */
 struct multiboot {
     u32int flags;
     u32int mem_lower;
