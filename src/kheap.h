@@ -51,7 +51,7 @@ typedef struct {
     u32int end_addr;
     /* The maximum address heap can be expanded to. */
     u32int max_addr;
-    /* Should extra pages requested be mapped as supervisor-ony? */
+    /* Should extra pages requested be mapped as supervisor-only? */
     u8int supervisor;
     /* Should extra pages requested be mapped as read-only? */
     u8int readonly;
