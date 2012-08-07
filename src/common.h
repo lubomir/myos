@@ -1,30 +1,48 @@
-/*
- * common.h -- Defines typedefs and some global functions.
+/**
+ * @file    common.h
+ *
+ * Defines types and some global functions.
+ *
  * From JamesM's kernel development tutorials.
  */
 
 #ifndef COMMON_H
 #define COMMON_H
 
+/** 32-bit unsigned int */
 typedef unsigned int   u32int;
+/** 32-bit signed int */
 typedef          int   s32int;
+/** 16-bit unsigned int */
 typedef unsigned short u16int;
+/** 16-bit signed int */
 typedef          short s16int;
+/** 8-bit unsigned int */
 typedef unsigned char  u8int;
+/** 8-bit signed int */
 typedef          char  s8int;
 
-/*
+/**
  * Write a byte out to the specified port.
+ *
+ * @param port  port to write to
+ * @param value vale to be written
  */
 void outb(u16int port, u8int value);
 
-/*
+/**
  * Read a byte from specified port.
+ *
+ * @param port  port to read from
+ * @return read value
  */
 u8int inb(u16int port);
 
-/*
+/**
  * Read a two-byte word from specified port.
+ *
+ * @param port  port to read from
+ * @return read value
  */
 u16int inw(u16int port);
 
@@ -49,19 +67,23 @@ u16int inw(u16int port);
 #define ICW5_BUF_MASTER 0x0C    /* BUffered mode/master */
 #define ICW_SFNM        0x10    /* Special fully nested (not) */
 
-/*
+/**
  * This function prints error message and enters infinite loop.
+ *
+ * @param msg   message to be printed
+ * @param file  filename where panic occurred
+ * @param line  line number where panic occured
  */
 void panic(const char *msg, const char *file, int line)
     __attribute__((noreturn));
 
-/*
+/**
  * Accessor macro for panic() function that fills in filename and line number
  * automatically.
  */
 #define PANIC(msg) do { panic(msg, __FILE__, __LINE__); } while (0)
 
-/*
+/**
  * Check that condition holds and panic if it does not.
  */
 #define ASSERT(exp) \
