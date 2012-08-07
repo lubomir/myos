@@ -16,7 +16,7 @@
  * This structure represents contents of registers.
  * It is passed to interrupt handlers.
  */
-typedef struct registers {
+typedef struct {
     /** Data segment selector. */
     u32int ds;
     /* Pushed by pusha */
