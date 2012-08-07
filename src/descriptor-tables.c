@@ -10,6 +10,51 @@
 #include "descriptor-tables.h"
 #include "isr.h"
 
+/**
+ * A struct describing a Task State Segment.
+ */
+struct tss_entry_struct {
+    /** The previous TSS - if we used hardware task switching this would
+     * form a linked list */
+    u32int prev_tss;
+    /** The stack pointer to load when we change to kernel mode */
+    u32int esp0;
+    /** The stack segment to load when we change to kernel mode */
+    u32int ss0;
+    /* Following members are unused and undocumented. */
+    u32int esp1;    /**< Unused */
+    u32int ss1;     /**< Unused */
+    u32int esp2;    /**< Unused */
+    u32int ss2;     /**< Unused */
+    u32int cr3;     /**< Unused */
+    u32int eip;     /**< Unused */
+    u32int eflags;  /**< Unused */
+    u32int eax;     /**< Unused */
+    u32int ecx;     /**< Unused */
+    u32int edx;     /**< Unused */
+    u32int ebx;     /**< Unused */
+    u32int esp;     /**< Unused */
+    u32int ebp;     /**< Unused */
+    u32int esi;     /**< Unused */
+    u32int edi;     /**< Unused */
+    /** The value to load into ES when we change to kernel mode */
+    u32int es;
+    /** The value to load into CS when we change to kernel mode */
+    u32int cs;
+    /** The value to load into SS when we change to kernel mode */
+    u32int ss;
+    /** The value to load into DS when we change to kernel mode */
+    u32int ds;
+    /** The value to load into FS when we change to kernel mode */
+    u32int fs;
+    /** The value to load into GS when we change to kernel mode */
+    u32int gs;
+    /* Following members are unused and undocumented */
+    u32int ldt;         /**< Unused */
+    u16int trap;        /**< Unused */
+    u16int iomap_base;  /**< Unused */
+} PACKED;
+
 /* This lets us call ASM functions from the C code. */
 extern void gdt_flush(u32int);
 extern void idt_flush(u32int);
@@ -26,7 +71,7 @@ gdt_entry_t gdt_entries[6];
 gdt_ptr_t   gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
-tss_entry_t tss_entry;
+struct tss_entry_struct tss_entry;
 
 extern isr_t interrupt_handlers[];
 
@@ -86,7 +131,6 @@ extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
 extern void isr128(void);
-
 
 /*
  * Initialization routine zeroes all the interrupt service routines,
