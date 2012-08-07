@@ -70,14 +70,17 @@ endif
 include data/Makefile.mk
 include tools/Makefile.mk
 
-.PHONY : clean cloc run-bochs debug-bochs run-qemu debug-qemu
+.PHONY : clean cloc doc run-bochs debug-bochs run-qemu debug-qemu
 
 clean:
 	-rm -f src/*.o src/*.dep $(KERNEL) $(INITRD)
 	-rm -f $(CLEANTARGETS)
 
 cloc:
-	@cloc . --exclude-dir=tmp --force-lang=make,mk
+	@cloc . --exclude-dir=tmp --exclude-dir=docs --force-lang=make,mk
+
+doc :
+	doxygen
 
 floppy.img : $(KERNEL)
 	sh tools/update_image.sh
