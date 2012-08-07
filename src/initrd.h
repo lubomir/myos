@@ -9,7 +9,6 @@
 #ifndef INITRD_H
 #define INITRD_H
 
-#include "common.h"
 #include "fs.h"
 
 /**

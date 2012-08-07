@@ -9,7 +9,6 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include "common.h"
 #include "paging.h"
 
 /** Use a 2kB kernel stack. */
