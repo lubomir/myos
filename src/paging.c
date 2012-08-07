@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include "isr.h"
 #include "kheap.h"
 #include "monitor.h"
 #include "paging.h"
@@ -25,6 +26,13 @@ extern heap_t *kheap;
 /* Macros used in the bitset algorithms. */
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
+
+/**
+ * Handler for page faults.
+ *
+ * @param regs  state of registers
+ */
+static void page_fault(registers_t *regs);
 
 /*
  * Static function to set a bit in the frames bitset.
@@ -141,7 +149,7 @@ void initialise_paging(void)
         alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
 
     /* Before we enable paging, we must register our page fault handler. */
-    register_interrupt_handler(14, page_fault);
+    register_interrupt_handler(14, &page_fault);
 
     /* Now, enable paging! */
     switch_page_directory(kernel_directory);
@@ -183,7 +191,7 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
     return 0;
 }
 
-void page_fault(registers_t *regs)
+static void page_fault(registers_t *regs)
 {
     /* A page fault has occurred.
      * The faulting address is stored in the CR2 register. */

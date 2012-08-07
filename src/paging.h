@@ -10,7 +10,6 @@
 #define PAGING_H
 
 #include "common.h"
-#include "isr.h"
 
 /** Representation of a page. */
 typedef struct {
@@ -70,13 +69,6 @@ void switch_page_directory(page_directory_t *newdir);
  * @return page where the address is located
  */
 page_t *get_page(u32int address, int make, page_directory_t *dir);
-
-/**
- * Handler for page faults.
- *
- * @param regs  state of registers
- */
-void page_fault(registers_t *regs);
 
 /**
  * Allocate a frame.
