@@ -47,7 +47,7 @@ struct gdt_entry_struct {
     u8int granularity;
     /** The last 8 bits of the base. */
     u8int base_high;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct gdt_entry_struct gdt_entry_t;
 
@@ -56,7 +56,7 @@ struct gdt_ptr_struct {
     u16int limit;
     /** The address of the first gdt_entry_t struct */
     u32int base;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct gdt_ptr_struct gdt_ptr_t;
 
@@ -82,7 +82,7 @@ struct idt_entry_struct {
     u8int flags;
     /** The upper 16 bits of the address to jump to */
     u16int base_hi;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct idt_entry_struct idt_entry_t;
 
@@ -94,7 +94,7 @@ struct idt_ptr_struct {
     u16int limit;
     /** The address of the first element in our idt_entry_t array. */
     u32int base;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct idt_ptr_struct idt_ptr_t;
 
@@ -203,7 +203,7 @@ struct tss_entry_struct {
     u32int ldt;
     u16int trap;
     u16int iomap_base;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct tss_entry_struct tss_entry_t;
 

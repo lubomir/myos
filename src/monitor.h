@@ -76,6 +76,6 @@ void monitor_write_num(u32int n, u32int base, u8int c, u8int fwidth, char pad);
  * @param fmt   formatting string
  */
 void monitor_print(const char *fmt, ...)
-    __attribute__((format(printf, 1, 2)));
+    FORMAT(printf, 1, 2);
 
 #endif /* end of include guard: MONITOR_H */

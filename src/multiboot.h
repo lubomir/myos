@@ -49,7 +49,7 @@ struct multiboot {
     u32int vbe_interface_seg;
     u32int vbe_interface_off;
     u32int vbe_interface_len;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct multiboot_header multiboot_header_t;
 

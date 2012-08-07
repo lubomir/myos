@@ -46,6 +46,17 @@ u8int inb(u16int port);
  */
 u16int inw(u16int port);
 
+/* Doxygen does not like the __attribute__ syntax, so hide it from it. */
+#ifndef DOXYGEN_RUNNING
+#define PACKED          __attribute__((packed))
+#define NORETURN        __attribute__((noreturn))
+#define FORMAT(a,b,c)   __attribute__((format(a,b,c)))
+#else
+#define PACKED          /**< Defines a structure as packed. */
+#define NORETURN        /**< Defines a function as non-returning. */
+#define FORMAT(a,b,c)   /**< Defines a function as printf-like. */
+#endif /* DOXYGEN_RUNNING */
+
 /* Master PIC IO port */
 #define PIC1            0x20
 #define PIC1_DATA       (PIC1 + 1)
@@ -74,8 +85,7 @@ u16int inw(u16int port);
  * @param file  filename where panic occurred
  * @param line  line number where panic occured
  */
-void panic(const char *msg, const char *file, int line)
-    __attribute__((noreturn));
+void panic(const char *msg, const char *file, int line) NORETURN;
 
 /**
  * Accessor macro for panic() function that fills in filename and line number
