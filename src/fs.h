@@ -28,6 +28,7 @@ typedef void   (*close_type_t)  (struct fs_node*);
 typedef struct dirent * (*readdir_type_t) (struct fs_node*, u32int);
 typedef struct fs_node * (*finddir_type_t) (struct fs_node*, char *name);
 
+/** Node in a file system tree. */
 typedef struct fs_node {
     /** The filename. */
     char name[128];
@@ -57,6 +58,7 @@ typedef struct fs_node {
     struct fs_node *ptr;
 } fs_node_t;
 
+/** Directory entry. */
 struct dirent {
     /** Filename. */
     char name[128];
