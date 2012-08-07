@@ -34,22 +34,22 @@ typedef struct {
            ss /** Stack segment */;
 } registers_t;
 
-#define IRQ0    32
-#define IRQ1    33
-#define IRQ2    34
-#define IRQ3    35
-#define IRQ4    36
-#define IRQ5    37
-#define IRQ6    38
-#define IRQ7    39
-#define IRQ8    40
-#define IRQ9    41
-#define IRQ10   42
-#define IRQ11   43
-#define IRQ12   44
-#define IRQ13   45
-#define IRQ14   46
-#define IRQ15   47
+#define IRQ0    32      /**< Interrupt request 0  */
+#define IRQ1    33      /**< Interrupt request 1  */
+#define IRQ2    34      /**< Interrupt request 2  */
+#define IRQ3    35      /**< Interrupt request 3  */
+#define IRQ4    36      /**< Interrupt request 4  */
+#define IRQ5    37      /**< Interrupt request 5  */
+#define IRQ6    38      /**< Interrupt request 6  */
+#define IRQ7    39      /**< Interrupt request 7  */
+#define IRQ8    40      /**< Interrupt request 8  */
+#define IRQ9    41      /**< Interrupt request 9  */
+#define IRQ10   42      /**< Interrupt request 10 */
+#define IRQ11   43      /**< Interrupt request 11 */
+#define IRQ12   44      /**< Interrupt request 12 */
+#define IRQ13   45      /**< Interrupt request 13 */
+#define IRQ14   46      /**< Interrupt request 14 */
+#define IRQ15   47      /**< Interrupt request 15 */
 
 /**
  * Enables registration of callbacks for interrupts and IRQs.
