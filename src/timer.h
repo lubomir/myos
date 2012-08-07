@@ -1,5 +1,11 @@
-/*
- * timer.h -- defines the interface for all PIT related functions.
+/**
+ * @file    timer.h
+ *
+ * Defines the interface for all PIT related functions.
+ *
+ * The Programmable Interval Timer is a chip connected to IRQ0.
+ * It can interrupt the CPU at specified intervals.
+ *
  * Written and taken from JamesM's kernel development tutorial.
  */
 
@@ -8,13 +14,7 @@
 
 #include "common.h"
 
-/*
- * The Programmable Interval Timer is a chip connected to IRQ0.
- *
- * It can interrupt the CPU at specified intervals.
- */
-
-/*
+/**
  * This is the frequency of PIT internal clock.
  */
 #define PIT_FREQ    1193180
@@ -73,9 +73,9 @@
 #define PIT_BINARY      0x00
 #define PIT_BCD         0x01
 
-/*
+/**
  * Initialize timer to fire with given frequency.
- * NOTE: interrupts must be enabled for timer to work. Use 'sti' instruction
+ * NOTE: interrupts must be enabled for timer to work. Use `sti` instruction
  * to enable them.
  *
  * @param frequency     requested frequency in Hz
