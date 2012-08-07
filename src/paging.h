@@ -32,7 +32,7 @@ typedef struct {
 
 /** Page table is an array of 1024 pages. */
 typedef struct {
-    page_t pages[1024];
+    page_t pages[1024];     /**< Pages in this table */
 } page_table_t;
 
 /**
