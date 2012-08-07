@@ -1,6 +1,9 @@
-/*
- * syscall.h - defines the interface for and structures relating to the
- *             syscall dispatch system.
+/**
+ * @file    syscall.h
+ *
+ * Defines the interface for and structures relating to the syscall
+ * dispatch system.
+ *
  * Written for JamesM's kernel development tutorial.
  */
 
@@ -9,7 +12,7 @@
 
 #include "common.h"
 
-/*
+/**
  * Enable syscall dispatch system.
  */
 void initialise_syscalls(void);
