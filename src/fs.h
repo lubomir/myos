@@ -11,13 +11,13 @@
 
 #include "common.h"
 
-#define FS_FILE         0x01
-#define FS_DIRECTORY    0x02
-#define FS_CHARDEVICE   0x03
-#define FS_BLOCKDEVICE  0x04
-#define FS_PIPE         0x05
-#define FS_SYMLINK      0x06
-#define FS_MOUNTPOINT   0x08    /**< Is the file an active mountpoint? */
+#define FS_FILE         0x01    /**< Whether node is a file */
+#define FS_DIRECTORY    0x02    /**< Whether node is a directory */
+#define FS_CHARDEVICE   0x03    /**< Whether node is a character device */
+#define FS_BLOCKDEVICE  0x04    /**< Whether node is a block device */
+#define FS_PIPE         0x05    /**< Whether node is a pipe */
+#define FS_SYMLINK      0x06    /**< Whether node is a symbolic link */
+#define FS_MOUNTPOINT   0x08    /**< Whether node is an active mountpoint? */
 
 struct fs_node;
 
