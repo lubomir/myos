@@ -1,5 +1,7 @@
-/*
- * ide.c -- defines functions relating to IDE drive.
+/**
+ * @file    ide.c
+ *
+ * Defines functions relating to IDE drive.
  */
 
 #include <string.h>
@@ -9,14 +11,14 @@
 
 /* The Command/Status ports returns a bit mask referring to status of
  * a channel when read. Following are its bits. */
-#define ATA_SR_BSY  0x80    /* Drive is preparing to send/receive data. */
-#define ATA_SR_DRDY 0x40    /* Bit is clear when drive is spun down. */
-#define ATA_SR_DF   0x20    /* Drive Fault error. */
-#define ATA_SR_DSC  0x10    /* Command dependent bit. */
-#define ATA_SR_DRQ  0x08    /* Ready to transfer data. */
-#define ATA_SR_CORR 0x04    /* Unused. */
-#define ATA_SR_IDX  0x02    /* Unused. */
-#define ATA_SR_ERR  0x01    /* Error occurred. */
+#define ATA_SR_BSY  0x80    /**< Drive is preparing to send/receive data. */
+#define ATA_SR_DRDY 0x40    /**< Bit is clear when drive is spun down. */
+#define ATA_SR_DF   0x20    /**< Drive Fault error. */
+#define ATA_SR_DSC  0x10    /**< Command dependent bit. */
+#define ATA_SR_DRQ  0x08    /**< Ready to transfer data. */
+#define ATA_SR_CORR 0x04    /**< Unused. */
+#define ATA_SR_IDX  0x02    /**< Unused. */
+#define ATA_SR_ERR  0x01    /**< Error occurred. */
 
 /* The Features/Error Port has these possible bit masks. */
 #define ATA_ER_BBK      0x80
@@ -63,7 +65,7 @@
 #define ATA_IDENT_COMMANDSETS   164
 #define ATA_IDENT_MAX_LBA_EXT   200
 
-/* When selecting drives, the interface type and master/slave setting
+/** When selecting drives, the interface type and master/slave setting
  * should be specified. */
 typedef enum {
     IDE_ATA     = 0x00,
@@ -99,37 +101,37 @@ typedef enum {
 #define ATA_SECONDARY   0x01
 
 struct ide_channel_registers {
-    /* IO Base. */
+    /** IO Base. */
     u16int base;
-    /* Control Base. */
+    /** Control Base. */
     u16int ctrl;
-    /* Bus Master IDE. */
+    /** Bus Master IDE. */
     u16int bmide;
-    /* nIEN (No Interrupt). 0 = Interrupts enabled, 2 = Interrupts disabled */
+    /** nIEN (No Interrupt). 0 = Interrupts enabled, 2 = Interrupts disabled */
     u8int  nIen;
 } channels[2];
 
-/* Buffer to hold the identification space. */
+/** Buffer to hold the identification space. */
 u8int ide_buf[2048] = {0};
 
 struct ide_device {
-    /* 0 (empty) or 1 (this drive exists). */
+    /** 0 (empty) or 1 (this drive exists). */
     u8int reserved;
-    /* 0 (Primary channel) or 1 (Secondary Channel). */
+    /** 0 (Primary channel) or 1 (Secondary Channel). */
     u8int channel;
-    /* 0 (Master Drive) or 1 (Slave Drive). */
+    /** 0 (Master Drive) or 1 (Slave Drive). */
     ide_drive_t drive;
-    /* 0 (ATA) or 1 (ATAPI). */
+    /** 0 (ATA) or 1 (ATAPI). */
     ide_interface_t type;
-    /* Drive signature. */
+    /** Drive signature. */
     u16int signature;
-    /* Features. */
+    /** Features. */
     u16int capabilities;
-    /* Supported Command Sets. */
+    /** Supported Command Sets. */
     u32int commandsets;
-    /* Size in sectors. */
+    /** Size in sectors. */
     u32int size;
-    /* Model as a string. */
+    /** Model as a string. */
     u8int model[41];
 } ide_devices[4];
 
@@ -160,7 +162,7 @@ static u16int get_port_for_register(u8int channel, u8int reg)
         ide_write(channel, ATA_REG_CONTROL, channels[chan].nIen); \
 } while (0)
 
-/*
+/**
  * Read data from channel and register.
  */
 u8int ide_read(u8int channel, u8int reg)
@@ -174,7 +176,7 @@ u8int ide_read(u8int channel, u8int reg)
     return result;
 }
 
-/*
+/**
  * Write data to a register.
  */
 void ide_write(u8int channel, u8int reg, u8int data)
@@ -194,7 +196,7 @@ void ide_read_buffer(u8int channel, u8int reg, u32int buffer, u32int quads)
     enable_irq(channel, reg);
 }
 
-/*
+/**
  * Sleep for given number of nanoseconds. This function is implemented using
  * reading from ALTSTATUS register of primary channel.
  * Note that parameter should be a multiple of 100.
@@ -208,7 +210,7 @@ static void sleep_ns(u32int ns)
     }
 }
 
-/*
+/**
  * Wait for BSY bit to be cleared.
  *
  * If advanced_check is non-zero, other bits are checked. If any error is
@@ -401,7 +403,7 @@ void initialise_ide(void)
     }
 }
 
-/*
+/**
  * Setup variable to be sent to controller as an address specification.
  * NOTE: even though LBA48 addressing mode allows six byte addresses, we
  * are currently limited by 32-bit variable for the address, so two highest
