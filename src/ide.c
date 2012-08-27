@@ -11,14 +11,14 @@
 
 /* The Command/Status ports returns a bit mask referring to status of
  * a channel when read. Following are its bits. */
-#define ATA_SR_BSY  0x80    /**< Drive is preparing to send/receive data. */
-#define ATA_SR_DRDY 0x40    /**< Bit is clear when drive is spun down. */
-#define ATA_SR_DF   0x20    /**< Drive Fault error. */
-#define ATA_SR_DSC  0x10    /**< Command dependent bit. */
-#define ATA_SR_DRQ  0x08    /**< Ready to transfer data. */
-#define ATA_SR_CORR 0x04    /**< Unused. */
-#define ATA_SR_IDX  0x02    /**< Unused. */
-#define ATA_SR_ERR  0x01    /**< Error occurred. */
+#define ATA_SR_BSY  0x80    /**< Drive is preparing to send/receive data */
+#define ATA_SR_DRDY 0x40    /**< Bit is clear when drive is spun down */
+#define ATA_SR_DF   0x20    /**< Drive Fault error */
+#define ATA_SR_DSC  0x10    /**< Command dependent bit */
+#define ATA_SR_DRQ  0x08    /**< Ready to transfer data */
+#define ATA_SR_CORR 0x04    /**< Unused */
+#define ATA_SR_IDX  0x02    /**< Unused */
+#define ATA_SR_ERR  0x01    /**< Error occurred */
 
 /* The Features/Error Port has these possible bit masks. */
 #define ATA_ER_BBK      0x80
