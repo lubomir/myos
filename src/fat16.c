@@ -59,7 +59,8 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     for (j = 0; j < fat_boot.root_entry_count; ++j) {
         if (dir[j].name[0] == 0 || dir[j].name[0] == 0xE5)
             continue;
-        /* TODO check for long file name entry */
+        if (dir[j].attribs == 0x0F) /* Long file name not supported */
+            continue;
         int i;
         for (i = 0; i < 8; i++)
             monitor_put(dir[j].name[i]);
