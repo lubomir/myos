@@ -15,7 +15,7 @@ typedef struct {
     u32int  volume_id;
     u8int   volume_label[11];
     u8int   fat_type_label[8];
-} __attribute__((packed)) fat_extbs_16_t;
+} PACKED fat_extbs_16_t;
 
 typedef struct {
     u8int   bootjmp[3];
@@ -34,7 +34,7 @@ typedef struct {
     u32int  total_sectors_32;
 
     u8int   extended_section[54];
-} __attribute__((packed)) fat_bs_t;
+} PACKED fat_bs_t;
 
 #define FAT_READ_ONLY   0x01
 #define FAT_HIDDEN      0x02

@@ -43,7 +43,7 @@ struct pt_entry {
     u32int relsec;
     /* Total number of sectors in a partition. */
     u32int numsec;
-} __attribute__((packed));
+} PACKED;
 
 typedef struct pt_entry pt_entry_t;
 
