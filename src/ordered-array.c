@@ -35,7 +35,7 @@ ordered_array_t oa_place(void *addr, u32int max_size, cmp_predicate_t pred)
 
 void oa_destroy(ordered_array_t *array)
 {
-    kfree((u32int) array->data);
+    kfree(array->data);
 }
 
 void oa_insert(ordered_array_t *arr, type_t item)

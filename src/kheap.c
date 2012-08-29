@@ -108,9 +108,9 @@ void * kmalloc_ap(u32int sz, u32int *phys)
     return kmalloc_internal(sz, 1, phys);
 }
 
-void kfree(u32int p)
+void kfree(void *p)
 {
-    free(kheap, (void *)p);
+    free(kheap, p);
 }
 
 /*

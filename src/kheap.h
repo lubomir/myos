@@ -128,6 +128,6 @@ void * kmalloc_ap(u32int sz, u32int *phys);
  *
  * @param p address which should be freed
  */
-void kfree(u32int p);
+void kfree(void *p);
 
 #endif /* end of include guard: KHEAP_H */
