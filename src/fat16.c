@@ -62,6 +62,8 @@ void fat_setup(u8int drive, pt_entry_t *partition)
             continue;
         if (dir[j].attribs == 0x0F) /* Long file name not supported */
             continue;
+        if (FAT_IS_VOLUME_ID(dir[j])) /* Volume ID is not a file */
+            continue;
         int i;
         for (i = 0; i < 8; i++)
             if (dir[j].name[i] != ' ') monitor_put(dir[j].name[i]);
