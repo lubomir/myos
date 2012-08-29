@@ -42,15 +42,7 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     monitor_print("Type: FAT%u\n", type);
 
     u32int root_cluster_12_or_16 = first_data_sector;
-    u32int absolute_cluster = root_cluster_12_or_16;
-    //u32int absolute_cluster = root_cluster_12_or_16 - 2 + first_data_sector;
-    u32int sector = absolute_cluster +
-        (fat_boot.root_entry_count * 32 / fat_boot.bytes_per_sector);
-
-    monitor_print("Should read sector %u\n", sector);
-
-    monitor_print("Reading %u sectors from %u\n",
-            root_dir_sectors, sector + partition->relsec);
+    u32int sector = root_cluster_12_or_16;
 
     fat_dir_t *dir = kmalloc(fat_boot.root_entry_count * sizeof *dir);
     ide_ata_access(ATA_READ, drive, sector + partition->relsec,
