@@ -80,4 +80,12 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     monitor_print("absolute sector: %u\n", sector + partition->relsec);
     monitor_print("byte offset: %x\n", (sector + partition->relsec) * 512);
     kfree(dir);
+
+    ide_ata_access(ATA_READ, drive, sector + partition->relsec,
+            1, (u16int *) buffer);
+    char *data = kmalloc(dir[2].size + 1);
+    memcpy(data, buffer, dir[2].size);
+    data[dir[2].size] = 0;
+    monitor_print("-%s-\n", data);
+    kfree(data);
 }
