@@ -65,5 +65,19 @@ void fat_setup(u8int drive, pt_entry_t *partition)
         }
         monitor_put('\t');
     }
+    monitor_put('\n');
+
+    /* dir[2] is SOMEFILE.TXT */
+    monitor_print("File size: %u\n", dir[2].size);
+
+    u32int sclust = dir[2].start_cluster_lo | dir[2].start_cluster_hi << 16;
+    monitor_print("relative cluster: %u\n", sclust);
+
+    u32int sector = first_data_sector + root_dir_sectors +
+        (sclust - 2) * fat_boot.sectors_per_cluster;
+
+    monitor_print("relative sector: %u\n", sector);
+    monitor_print("absolute sector: %u\n", sector + partition->relsec);
+    monitor_print("byte offset: %x\n", (sector + partition->relsec) * 512);
     kfree(dir);
 }
