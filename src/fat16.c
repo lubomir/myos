@@ -64,10 +64,12 @@ void fat_setup(u8int drive, pt_entry_t *partition)
             continue;
         int i;
         for (i = 0; i < 8; i++)
-            monitor_put(dir[j].name[i]);
-        monitor_put('.');
-        for (i = 8; i < 11; ++i)
-            monitor_put(dir[j].name[i]);
+            if (dir[j].name[i] != ' ') monitor_put(dir[j].name[i]);
+        if (!FAT_IS_DIR(dir[j])) {
+            monitor_put('.');
+            for (i = 8; i < 11; ++i)
+                if (dir[j].name[i] != ' ') monitor_put(dir[j].name[i]);
+        }
         monitor_put('\t');
     }
     kfree(dir);

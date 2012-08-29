@@ -43,6 +43,9 @@ typedef struct {
 #define FAT_DIRECTORY   0x10
 #define FAT_ARCHIVE     0x20
 
+/** Check if directory table entry describes a directory */
+#define FAT_IS_DIR(x) (((x).attribs & FAT_DIRECTORY) == FAT_DIRECTORY)
+
 typedef struct {
     u8int   name[11];
     u8int   attribs;
