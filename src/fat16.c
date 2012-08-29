@@ -5,6 +5,7 @@
 
 #include "fat16.h"
 #include "ide.h"
+#include "kheap.h"
 #include "monitor.h"
 
 u8int buffer[4096];
@@ -50,11 +51,11 @@ void fat_setup(u8int drive, pt_entry_t *partition)
 
     monitor_print("Reading %u sectors from %u\n",
             root_dir_sectors, sector + partition->relsec);
-    memset(buffer, 0, 4096);
-    ide_ata_access(ATA_READ, drive, sector + partition->relsec,
-            root_dir_sectors, (u16int *) buffer);
 
-    fat_dir_t *dir = (fat_dir_t *) buffer;
+    fat_dir_t *dir = kmalloc(fat_boot.root_entry_count * sizeof *dir);
+    ide_ata_access(ATA_READ, drive, sector + partition->relsec,
+            root_dir_sectors, (u16int *) dir);
+
     int j;
     for (j = 0; j < fat_boot.root_entry_count; ++j) {
         if (dir[j].name[0] == 0 || dir[j].name[0] == 0xE5)
@@ -69,4 +70,5 @@ void fat_setup(u8int drive, pt_entry_t *partition)
             monitor_put(dir[j].name[i]);
         monitor_put('\t');
     }
+    kfree(dir);
 }
