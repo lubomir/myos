@@ -50,7 +50,9 @@ void fat_setup(u8int drive, pt_entry_t *partition)
 
     int j;
     for (j = 0; j < fat_boot.root_entry_count; ++j) {
-        if (dir[j].name[0] == 0 || dir[j].name[0] == 0xE5)
+        if (dir[j].name[0] == 0x00) /* No following entry in use. */
+            break;
+        if (dir[j].name[0] == 0xE5) /* Deleted file. */
             continue;
         if (dir[j].attribs == 0x0F) /* Long file name not supported */
             continue;
