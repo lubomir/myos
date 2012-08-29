@@ -68,21 +68,20 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     monitor_put('\n');
 
     /* dir[2] is SOMEFILE.TXT */
-    monitor_print("File size: %u\n", dir[2].size);
-
+    /* Cluster number stored in table entry */
     u32int sclust = dir[2].start_cluster_lo | dir[2].start_cluster_hi << 16;
-    monitor_print("relative cluster: %u\n", sclust);
 
+    /* Sector offset relative to start of partition */
     u32int sector = first_data_sector + root_dir_sectors +
         (sclust - 2) * fat_boot.sectors_per_cluster;
 
-    monitor_print("relative sector: %u\n", sector);
-    monitor_print("absolute sector: %u\n", sector + partition->relsec);
-    monitor_print("byte offset: %x\n", (sector + partition->relsec) * 512);
+    /* Directory table no longer needed */
     kfree(dir);
 
+    /* Load the cluster from disk */
+    /* TODO should check if buffer is big enough */
     ide_ata_access(ATA_READ, drive, sector + partition->relsec,
-            1, (u16int *) buffer);
+            fat_boot.sectors_per_cluster, (u16int *) buffer);
     char *data = kmalloc(dir[2].size + 1);
     memcpy(data, buffer, dir[2].size);
     data[dir[2].size] = 0;
