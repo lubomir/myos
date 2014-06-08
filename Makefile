@@ -95,7 +95,7 @@ debug-bochs: floppy.img
 	@bochs -q 'gdbstub: enabled=1'
 
 run-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD) -hda harddisk
+	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD) -hda harddisk
 
 debug-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD) -s -S -hda harddisk
+	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD) -s -S -hda harddisk
