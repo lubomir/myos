@@ -66,6 +66,9 @@ $(INITRD): tools/gen-initrd data/keymaps/us.keymap
 %.dep : %.c
 	@$(CC) $(CFLAGS) -MT "$(<:.c=.o) $@" -MM -o $@ $<
 
+harddisk :
+	wget -q https://dl.dropboxusercontent.com/u/964243/harddisk
+
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
@@ -94,8 +97,8 @@ run-bochs: floppy.img
 debug-bochs: floppy.img
 	@bochs -q 'gdbstub: enabled=1'
 
-run-qemu : $(KERNEL) $(INITRD)
+run-qemu : $(KERNEL) $(INITRD) harddisk
 	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD) -hda harddisk
 
-debug-qemu : $(KERNEL) $(INITRD)
+debug-qemu : $(KERNEL) $(INITRD) harddisk
 	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD) -s -S -hda harddisk
