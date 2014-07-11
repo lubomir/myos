@@ -45,6 +45,7 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     ide_ata_access(ATA_READ, drive, first_data_sector + partition->relsec,
             root_dir_sectors, (u16int *) dir);
 
+    monitor_print("\nListing contents of root folder:\n");
     int j;
     for (j = 0; j < fat_boot.root_entry_count; ++j) {
         if (dir[j].name[0] == 0x00) /* No following entry in use. */
@@ -85,6 +86,7 @@ void fat_setup(u8int drive, pt_entry_t *partition)
     char *data = kmalloc(dir[2].size + 1);
     memcpy(data, buffer, dir[2].size);
     data[dir[2].size] = 0;
-    monitor_print("-%s-\n", data);
+    monitor_print("\nListing contents of a file:\n");
+    monitor_print("<%s>\n", data);
     kfree(data);
 }
