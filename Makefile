@@ -92,7 +92,7 @@ debug-bochs: floppy.img
 	@bochs -q 'gdbstub: enabled=1'
 
 run-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD)
+	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD)
 
 debug-qemu : $(KERNEL) $(INITRD)
-	@qemu -kernel $(KERNEL) -initrd $(INITRD) -s -S
+	@qemu-system-i386 -kernel $(KERNEL) -initrd $(INITRD) -s -S
