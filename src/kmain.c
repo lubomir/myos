@@ -50,7 +50,7 @@ int kmain(struct multiboot *mboot_ptr, u32int initial_stack)
     initialise_paging();
 
     /* Start multitasking. */
-    initialise_tasking();
+    //initialise_tasking();
 
     /* Initialise the initial ramdisk, and set it as the filesystem root. */
     fs_root = initialise_initrd(initrd_location);
