@@ -1,0 +1,17 @@
+Ideally, upon booting this kernel should list contents of root file system and
+display contents of one file. However, on my machine it currently fails with
+page fault.
+
+To run the code, follow these commands:
+
+    $ git clone https://github.com/lubomir/myos.git
+    $ cd myos
+    $ git checkout fat
+    $ make run-qemu
+
+
+This code is heavily inspired by JamesM's kernel development tutorial [0] and
+OSdev wiki [1].
+
+[0]: http://www.jamesmolloy.co.uk/tutorial_html/index.html
+[1]: http://wiki.osdev.org/Main_Page
